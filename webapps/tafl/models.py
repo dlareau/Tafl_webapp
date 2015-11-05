@@ -31,12 +31,12 @@ class Piece(models.Model):
         ('KING', 'King'),
         ('PAWN', 'Pawn'),
     )
-    p_type = models.CharField(choices=PIECE_TYPEs)
+    p_type = models.CharField(choices=PIECE_TYPES, max_length=2)
     PIECE_COLORS = (
         ('BL', 'Black'),
         ('WH', 'White'),
     )
-    color = models.CharField(choices=PIECE_COLORS)
+    color = models.CharField(choices=PIECE_COLORS, max_length=2)
 
     def __unicode__(self):
         return self.color + ": " + self.p_type
@@ -48,7 +48,7 @@ class Square(models.Model):
     member = models.ForeignKey('Piece')
 
     def __unicode__(self):
-        return str(self.pk) + ": (" + str(self.x_coord) + ", " str(self.y_coord) + ")"
+        return str(self.pk) + ": (" + str(self.x_coord) + ", " + str(self.y_coord) + ")"
 
 class Ruleset(models.Model):
     name = models.CharField(max_length=40)
@@ -57,7 +57,7 @@ class Ruleset(models.Model):
         ('CORNER', 'Corner escape'),
         ('EDGE', 'Edge escape'),
     )
-    win_cond = models.CharField(choices=WIN_CONDITIONS)
+    win_cond = models.CharField(choices=WIN_CONDITIONS, max_length=6)
     size = models.IntegerField()
 
     def __unicode__(self):
