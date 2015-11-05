@@ -1,3 +1,4 @@
 from django.shortcuts import render
 
-# Create your views here.
+def gamespage(request):
+    return render(request, "tafl/mainpage.html")

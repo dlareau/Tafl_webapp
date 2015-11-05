@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tafl',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -51,6 +52,9 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'webapps.urls'
+
+LOGIN_URL = '/tafl/login'
+LOGIN_REDIRECT_URL = '/tafl/'
 
 TEMPLATES = [
     {
@@ -87,7 +91,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
