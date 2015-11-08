@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^joingame$', 'tafl.views.joingame', name='joingame'),
     url(r'^usersearch', 'tafl.views.usersearch', name='usersearch'),
     url(r'^profile', 'tafl.views.profile', name='view'),
+    url(r'^whatis$', 'tafl.views.about', name='about'),
 ]

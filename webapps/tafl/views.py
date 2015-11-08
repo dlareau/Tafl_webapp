@@ -30,5 +30,9 @@ def usersearch(request):
 def profile(request):
     return None
 
+#@login_required
+def about(request):
+    return render(request, "tafl/about.html")
+
 def register(request):
     return redirect('/tafl/')
