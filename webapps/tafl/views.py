@@ -28,7 +28,7 @@ def usersearch(request):
 
 #@login_required
 def profile(request):
-    return None
+    return render(request, "tafl/profile.html")
 
 #@login_required
 def about(request):
