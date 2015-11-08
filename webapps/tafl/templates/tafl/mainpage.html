@@ -3,5 +3,61 @@
 {% load staticfiles %}
 
 {% block content %}
-<p>THIS SURE IS SOME CONTENT WOWZERS</p>
+<div class="row">
+  <div class="col-md-8">
+    <div class="panel panel-default">
+      <div class="panel-body">
+	<h3>Create New Game</h3>
+      </div>
+      <div class="panel-body">
+	<h3>Join a Game</h3>
+	<div class="panel panel-info">
+	  <div class="panel-heading">
+	    <h5>Search By:</h5>
+	  </div>
+	  <div class="panel-body">
+	    {{ sortform }}
+	  </div>
+	</div>
+	{% for game in games %}
+	<div class="panel panel-default">
+	  <div class="panel-body">
+	    <div class="row">
+	      <div class="col-md-6">
+		<h4>{{ game.player.user.username }} ({{ game.player.rank }})</h4>
+	      </div>
+	      <div class="col-md-4"></div>
+	      <div class="col-md-1">
+		<h4>{{ game.takencolor }}</h4>
+	      </div>
+	    </div>
+	    <div class="row">
+	      <div class="col-md-3">
+		Version
+	      </div>
+	      <div class="col-md-6"></div>
+	      <div class="col-md-3">
+		<button class="btn btn-primary" type="submit">Join</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	{% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+	<h3>User Search</h3>
+      </div>
+      <div class="panel-body">
+	<form class="form-horizontal" role="form" method="POST" action="{% url 'usersearch' %}">
+	  {{ usform }}
+	  <input type="submit" value="go" class="btn btn-primary" />
+	</form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

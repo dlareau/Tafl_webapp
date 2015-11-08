@@ -7,5 +7,6 @@ urlpatterns = [
     url(r'^logout$', 'django.contrib.auth.views.logout_then_login', name='logout'),
     url(r'^makegame$', 'tafl.views.makegame', name='makegame'),
     url(r'^joingame$', 'tafl.views.joingame', name='joingame'),
+    url(r'^usersearch', 'tafl.views.usersearch', name='usersearch'),
     url(r'^profile', 'tafl.views.profile', name='view'),
 ]
