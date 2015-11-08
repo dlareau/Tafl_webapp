@@ -1,0 +1,84 @@
+{% extends "tafl/interior_base.html" %}
+{% block title %}About Tafl{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+<ul>
+  <li><a href="#what">What is Tafl?</a></li>
+  <li><a href="#rules">Rule Sets</a></li>
+  <li><a href="#strategy">Basic Strategy</a></li>
+</ul>
+
+<h1 id="what">What is Tafl?</h1>
+Tafl is a family of ancient boardgames which were precursors to chess. Gameplay is asymmetric. The white player has a king as well as pawns, and their goal is for their king to escape. The black player has only pawns and wants to capture the white king. There are several variants of tafl, some better documented than others. This site uses the rule set for Tablut (details below). We plan to add other rule sets in the future.
+<!--@TODO add other rule stuff as necessary -->
+
+<h1 id="rules">Rule Sets</h1>
+<ul>
+  <li><a href="#tablut">Tablut</a></li>
+  <li>more coming soon!</li>
+</ul>
+
+<h2 id="tablut">Tablut</h2>
+<h4> Setup </h4>
+<p>Tablut is played on a 9x9 board. The game begins with pieces arranged as so:</p>
+<!-- @TODO add diagram -->
+
+<h4>Movement</h4>
+<p>
+If you are familiar with chess - all pieces move like rooks. If you aren't: this means that pieces may move horizontally or vertically, but not diagonally, and they may move as far as they have room to. Meaning, if there is another piece in the way, you can't jump over it in any way.
+</p>
+<!-- movement diagrams -->
+<p>
+In Tablut, pieces may not stop on the center square of the board (the space where the king starts, aka the throne). Once the king has moved off of it, even he cannot return to sit there. However, pieces are allowed to move across it.
+</p>
+<!-- diagram -->
+<p>
+The corner spaces of the board are also off limits.
+</p>
+<!-- diagram-->
+
+<h4>Capturing</h4>
+<p>
+Pawns are captured by sandwiching them between two pieces of your own color, as seen below. Both players may capture pawns, however note that the king is weaponless and thus cannot be one of the capturing pieces.
+</p>
+<!--@TODO diagram-->
+<p>
+The king is captured by surrounding him on all four sides.
+</p>
+<!-- diagram -->
+<p>
+<u>What if I move a piece in between two enemy pieces?</u></br>
+<!-- diagram -->
+Your piece is not captured if this happens.
+</p>
+
+<h4>Win conditions</h4>
+<p>
+Black wins by capturing white's king, as described above.
+</p>
+<!--diagram-->
+<p>
+White wins by getting the king to any edge square of the board.
+</p>
+<!--diagram-->
+
+<!--h4>Tablut Variants</h4-->
+
+<h1 id="strategy">Basic Strategy</h1>
+<p>
+As with any strategy game, there are a whole bunch of tactics and tricks to learn to get good at tafl. Here, we offer some basic considerations to get you started.
+</p>
+
+<p>
+If you have played something like chess or checkers, you are probably used to thinking in terms of capturing pieces. This is not the best way to think about tafl! Think rather in terms of blocking off lines of enemy movement. If you're white, you want to open up areas where you king can move freely, so try to block black from getting into your space. If you're black, you want to get in white's way and keep them from moving where they want.
+</p>
+<p>
+That said, capturing is still useful. Capturing a piece out of the way may be a good move. Note, however, that capturing overall tends to benefit white, as it clears the board of obstructions to the king.
+</p>
+<p>
+More coming soon...
+</p>
+
+</br></br></br></br></br></br></br></br></br></br></br>
+{% endblock %}
