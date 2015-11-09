@@ -1,0 +1,65 @@
+{% extends "tafl/base.html" %}
+{% block title %}Welcome to Tafl Buddies!{% endblock %}
+{% load staticfiles %}
+
+{% block header %}
+<div class="row">
+  <div class="col-md-4"></div>
+  <div class="col-md-8">
+    <h4>Log in: </h4>
+    <form class="form-horizontal" role="form" method="post" action="{% url 'login' %}">
+      {% for field in lform %}
+      {{field.label_tag}} {{ field }}
+      {% endfor %}
+      <button class="btn btn-primary" type="submit">Login</button>
+      {% csrf_token %}
+    </form>
+    {% for error in lform.non_field_errors %}
+    <p style="color:red">{{error}}</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-4">
+    <h1>What is Tafl?</h1>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nec mi massa. Sed efficitur varius convallis. Praesent eget nisl lacinia, eleifend risus sed, fringilla est. Morbi vitae tincidunt metus. In vel neque quis enim scelerisque faucibus. Suspendisse potenti. Donec eget arcu porttitor ex ultrices placerat. Duis bibendum mauris a sem aliquet elementum. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris sit amet justo commodo, blandit massa in, dictum ligula. Aliquam et pharetra velit.
+    </p>
+  </div>
+  <div class="col-md-8">
+    <h3>Not a user?</h3>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+	Register now!
+      </div>
+      <div class="panel-body">
+	{% for error in rform.non_field_errors %}
+	<p style="color:red">
+	  {{ error }}
+	</p>
+	{% endfor %}
+	<form class="form-horizontal" role="form" method="post" action="{% url 'register' %}">
+	  {% for field in rform %}
+	  <div class="row">
+	    <div class="col-md-4">
+	      {{ field.label_tag }}
+	    </div>
+	    <div class="col-md-3">
+	      {{ field }}
+	    </div>
+	    <div class="col-md-4">
+	      {{ field.errors }}
+	    </div>
+	  </div>
+	  {% endfor %}
+	  <button class="btn btn-primary" type="submit">Register</button>
+	  {% csrf_token %}
+	</form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

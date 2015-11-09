@@ -1,0 +1,75 @@
+{% extends "tafl/interior_base.html" %}
+{% block title %} {{ user.username }} {% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-7">
+    <h1>username</h1>
+  </div>
+  <div>
+    <h1>rank: 5</h1>
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-2">
+	<p># games</p>
+      </div>
+      <div class="col-md-2">
+	<p>won</p>
+      </div>
+      <div class="col-md-2">
+	<p>lost</p>
+      </div>
+      <div class="col-md-4">
+	<p>filter by:</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+	Overall
+      </div>
+      <div class="col-md-2">
+	5
+      </div>
+      <div class="col-md-2">
+	2
+      </div>
+      <div class="col-md-2">
+	3
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+	White
+      </div>
+      <div class="col-md-2">
+	1
+      </div>
+      <div class="col-md-2">
+	0
+      </div>
+      <div class="col-md-2">
+	1
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+	Black
+      </div>
+      <div class="col-md-2">
+	4
+      </div>
+      <div class="col-md-2">
+	2
+      </div>
+      <div class="col-md-2">
+	2
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
