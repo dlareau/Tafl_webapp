@@ -8,15 +8,50 @@
     <div class="panel panel-default">
       <div class="panel-body">
 	<h3>Create New Game</h3>
+	<div class="panel panel-default">
+	  <div class="panel-body">
+	    <form role="form" class="form horizontal" method="post" action="{% url 'makegame'  %}">
+	      <label>color</label>
+	      <div class="radio">
+		<label><input type="radio" name="optradio">black</label>
+	      </div>
+	      <div class="radio">
+		<label><input type="radio" name="optradio">white</label>
+	      </div>
+	      <div class="radio">
+		<label><input type="radio" name="optradio">either</label>
+	      </div>
+	      <label for="sel1">variant:</label>
+	      <select class="form-control" id="sel1">
+		<option>Tablut</option>
+	      </select>
+	      <input type="submit" class="btn btn-primary" value="Make Game">
+	      {% csrf_token %}
+	    </form>
+	  </div>
+	</div>
       </div>
       <div class="panel-body">
 	<h3>Join a Game</h3>
-	<div class="panel panel-info">
-	  <div class="panel-heading">
-	    <h5>Search By:</h5>
-	  </div>
+	<div class="panel panel-default">
 	  <div class="panel-body">
-	    {{ sortform }}
+	    <div class="row">
+	      <div class="col-md-2">
+		<label>sort by:</label>
+	      </div>
+	      <div class="col-md-2">
+		<button class="btn btn-info">time</button>
+	      </div>
+	      <div class="col-md-3">
+		<button class="btn btn-info">player rank</button>
+	      </div>
+	      <div class="col-md-3">
+		<button class="btn btn-info">open color</button>
+	      </div>
+	      <div class="col-md-2">
+		<button class="btn btn-info">variant</button>
+	      </div>
+	    </div>
 	  </div>
 	</div>
 	{% for game in games %}

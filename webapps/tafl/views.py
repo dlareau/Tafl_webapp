@@ -9,12 +9,40 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 import json
 
+from itertools import chain
+
 from tafl.models import *
 from tafl.forms import *
 
 @login_required
 def gamespage(request):
-    return render(request, "tafl/mainpage.html", {'games':Game.objects.all()})
+    context = {}
+
+    currUser = request.user
+    context['user'] = currUser
+
+    #sort - having migration issues, so commenting this out for now
+    #sortby = request.GET.get('sortby')
+    #if sortby == 'time' or not sortby:
+    #    # by time is default
+    #    games = Game.objects.all().order_by('-time')
+    #if sortby == 'rank':
+    #    games = Game.objects.all().order_by('waiting_player__rank')
+    #if sortby == 'color':
+    #    #citation for __isnull
+    #    #stackoverflow.com/questions/14831327/in-a-django-queryset-how-to-
+    #        # filter-for-not-exists-in-a-many-to-one-relationsh
+    #    bgames = Game.objects.filter(black_player__isnull=False)
+    #    wgames = Game.objects.filter(white_player__isnull=False)
+    #    ugames = Game.objects.filter(black_player__isnull=True).filter(white_player__isnull=True)
+    #    #citation for itertools chain: 
+    #    #stackoverflow.com/questions/431628/how-to-combine-2-or-more-querysets-in-a-django-view
+    #    games = chain(bgames, wgames, ugames)
+    #if sortby == 'variant':
+    #    games = Game.objects.all() #bc rn there's only tablut - implement actual sorting later
+    #    
+    context['games'] = Game.objects.all()
+    return render(request, "tafl/mainpage.html", context)
 
 @login_required
 def game(request):
@@ -52,7 +80,37 @@ def usersearch(request):
 
 @login_required
 def profile(request):
-    return render(request, "tafl/profile.html")
+    context = {}
+
+    # user making the request so their profile link in navbar works
+    currUser = request.user
+    context['user'] = currUser
+
+    # user whose profile we want to load
+    profUser = User.objects.get(username=request.GET.get('un'))
+    context['puser'] = profUser
+    player = Player.objects.get(user=profUser)
+    context['rank'] = player.rank
+
+    # get stats
+    wt = Game.objects.filter(white_player=player).count()
+    context['whitetotal'] = wt
+    ww = Game.objects.filter(white_player=player).filter(winner=player).count()
+    context['whitewin'] = ww
+    wl = wt - ww
+    context['whitelose'] = wl
+
+    bt = Game.objects.filter(black_player=player).count()
+    context['blacktotal'] = bt
+    bw = Game.objects.filter(black_player=player).filter(winner=player).count()
+    context['blackwin'] = bw
+    bl = bt - bw
+    context['blacklose'] = bl
+
+    context['overallwin'] = ww + bw
+    context['overalllose'] = wl + bl
+    context['overalltotal'] = wt + bt
+    return render(request, "tafl/profile.html", context)
 
 @login_required
 def about(request):
