@@ -93,8 +93,7 @@ def makegame(request):
             player.cur_game = g;
             player.save()
 
-    request.method="GET"
-    return game(request)
+    return redirect('/tafl/game')
 
 @login_required
 def joingame(request):
