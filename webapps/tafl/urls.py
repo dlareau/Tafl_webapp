@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 
 urlpatterns = [
     url(r'^$', 'tafl.views.gamespage', name='games'),
+    url(r'^mainpage', 'tafl.views.gamespage', name='games'),
     url(r'^game$', 'tafl.views.game', name='game'),
     url(r'^register$', 'tafl.views.register', name='register'),
     url(r'^login$', 'tafl.views.mylogin', name='login'),

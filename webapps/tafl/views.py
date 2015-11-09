@@ -24,27 +24,33 @@ def gamespage(request):
     currUser = request.user
     context['user'] = currUser
 
-    #sort - having migration issues, so commenting this out for now
-    #sortby = request.GET.get('sortby')
-    #if sortby == 'time' or not sortby:
-    #    # by time is default
-    #    games = Game.objects.all().order_by('-time')
-    #if sortby == 'rank':
-    #    games = Game.objects.all().order_by('waiting_player__rank')
-    #if sortby == 'color':
-    #    #citation for __isnull
-    #    #stackoverflow.com/questions/14831327/in-a-django-queryset-how-to-
-    #        # filter-for-not-exists-in-a-many-to-one-relationsh
-    #    bgames = Game.objects.filter(black_player__isnull=False)
-    #    wgames = Game.objects.filter(white_player__isnull=False)
-    #    ugames = Game.objects.filter(black_player__isnull=True).filter(white_player__isnull=True)
-    #    #citation for itertools chain: 
-    #    #stackoverflow.com/questions/431628/how-to-combine-2-or-more-querysets-in-a-django-view
-    #    games = chain(bgames, wgames, ugames)
-    #if sortby == 'variant':
-    #    games = Game.objects.all() #bc rn there's only tablut - implement actual sorting later
-    #    
-    context['games'] = Game.objects.filter(waiting_player__isnull=False)
+    sortby = request.GET.get('sortby')
+    #citation for __isnull
+    #stackoverflow.com/questions/14831327/in-a-django-queryset-how-to-
+       # filter-for-not-exists-in-a-many-to-one-relationsh
+    if sortby == 'time' or not sortby:
+        print "sortby time"
+        # by time is default
+        games = Game.objects.filter(waiting_player__isnull=False).order_by('timestamp')
+    if sortby == 'rank':
+        print "sortby rank"
+        games = Game.objects.filter(waiting_player__isnull=False).order_by('waiting_player__rank')
+    if sortby == 'color':
+        print "sortby color"
+        games = Game.objects.filter(waiting_player__isnull=False).order_by('waitingcolor')
+        
+        #bgames = Game.objects.filter(black_player__isnull=False)
+        #wgames = Game.objects.filter(white_player__isnull=False)
+        #ugames = Game.objects.filter(black_player__isnull=True).filter(white_player__isnull=True)
+        #citation for itertools chain: 
+        #stackoverflow.com/questions/431628/how-to-combine-2-or-more-querysets-in-a-django-view
+        #games = chain(bgames, wgames, ugames)
+    if sortby == 'variant':
+        print "sortby variant"
+        #bc rn there's only tablut - implement actual sorting later
+        games = Game.objects.filter(waiting_player__isnull=False)
+        
+    context['games'] = games
     return render(request, "tafl/mainpage.html", context)
 
 @login_required
