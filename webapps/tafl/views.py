@@ -29,7 +29,37 @@ def usersearch(request):
 
 @login_required
 def profile(request):
-    return render(request, "tafl/profile.html")
+    context = {}
+
+    # user making the request so their profile link in navbar works
+    currUser = request.user
+    context['user'] = currUser
+
+    # user whose profile we want to load
+    profUser = User.objects.get(username=request.GET.get('un'))
+    context['puser'] = profUser
+    player = Player.objects.get(user=profUser)
+    context['rank'] = player.rank
+
+    # get stats
+    wt = Game.objects.filter(white_player=player).count()
+    context['whitetotal'] = wt
+    ww = Game.objects.filter(white_player=player).filter(winner=player).count()
+    context['whitewin'] = ww
+    wl = wt - ww
+    context['whitelose'] = wl
+
+    bt = Game.objects.filter(black_player=player).count()
+    context['blacktotal'] = bt
+    bw = Game.objects.filter(black_player=player).filter(winner=player).count()
+    context['blackwin'] = bw
+    bl = bt - bw
+    context['blacklose'] = bl
+
+    context['overallwin'] = ww + bw
+    context['overalllose'] = wl + bl
+    context['overalltotal'] = wt + bt
+    return render(request, "tafl/profile.html", context)
 
 @login_required
 def about(request):
