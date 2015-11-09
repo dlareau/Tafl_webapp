@@ -11,6 +11,7 @@ import json
 
 from itertools import chain
 
+#from tafl.redis import *
 from tafl.models import *
 from tafl.forms import *
 
@@ -45,24 +46,23 @@ def gamespage(request):
     return render(request, "tafl/mainpage.html", context)
 
 @login_required
+@transaction.atomic
 def game(request):
     # Post requests to game are move requests
     if(request.method == 'POST'):
-        g = request.user.player_set.all()[0].cur_game
         if("move" in request.POST and request.POST["move"] != ""):
             move = json.loads(request.POST["move"])
-            # is the move a lateral move?
-            if(move[0][0] == move[1][0] or move[0][1] == move[1][1]):
-                s1 = Square.objects.get(game=g, x_coord=move[0][0], y_coord=move[0][1])
-                s2 = Square.objects.get(game=g, x_coord=move[1][0], y_coord=move[1][1])
-                # is the space occupied?
-                if(s1.member and not s2.member):
-                    # Move the things
-                    s2.member = s1.member;
-                    s1.member = None;
-                    s1.save()
-                    s2.save()
-                    return HttpResponse("valid")
+            g = request.user.player_set.all()[0].cur_game
+            if(g.is_valid_move(move[0], move[1])):
+                p = Player.objects.get(user=request.user)
+                if(g.white_player == p):
+                    send_move_update(g.black_player, move)
+                elif(g.black_player == p):
+                    send_move_update(g.white_player, move)
+                else:
+                    return HttpResponse("invalid")
+                g.make_move(move[0], move[1])
+                return HttpResponse("valid")
         return HttpResponse("invalid")
     return render(request, "tafl/gamepage.html", {'game':Game.objects.all()[0]})
 

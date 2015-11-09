@@ -25,6 +25,23 @@ class Game(models.Model):
     winner = models.ForeignKey('Player', related_name='won_games', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    def is_valid_move(self, first_pos, second_pos):
+        if(first_pos[0] == second_pos[0] or first_pos[1] == second_pos[1]):      
+            s1 = self.squares.get(x_coord=first_pos[0], y_coord=first_pos[1])
+            s2 = self.squares.get(x_coord=second_pos[0], y_coord=second_pos[1])
+            if(s1.member and not s2.member):
+                return True;
+        return False;
+
+    def make_move(self, first_pos, second_pos):  
+        s1 = self.squares.get(x_coord=first_pos[0], y_coord=first_pos[1])
+        s2 = self.squares.get(x_coord=second_pos[0], y_coord=second_pos[1])
+        s2.member = s1.member;
+        s1.member = None;
+        s1.save()
+        s2.save()
+
+
     def __unicode__(self):
         return str(self.players.all())
 
