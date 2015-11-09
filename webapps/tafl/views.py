@@ -6,7 +6,7 @@ from django.http import Http404, HttpResponse
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, logout, authenticate
 
 from tafl.models import *
 from tafl.forms import *
@@ -35,7 +35,7 @@ def profile(request):
 def about(request):
     return render(request, "tafl/about.html")
 
-def login(request):
+def mylogin(request):
     context = {}
     if request.method == "GET":
         context['lform'] = LoginForm()
@@ -49,9 +49,21 @@ def login(request):
         context['rform'] = RegistrationForm()
         return render(request, "tafl/login.html", context)
 
+    user = authenticate(username=form.cleaned_data['username'], 
+                        password=form.cleaned_data['password'])
+    if user is not None and user.is_active:
+        login(request, user)
+        return redirect('/tafl/')
     
+    context['rform'] = RegistrationForm()
+    return render(request, "tafl/login.html", context)
 
-    return None
+def mylogout(request):
+    logout(request)
+    context = {}
+    context['lform'] = LoginForm()
+    context['rform'] = RegistrationForm()
+    return render(request, "tafl/login.html", context)
 
 @transaction.atomic
 def register(request):
@@ -64,10 +76,17 @@ def register(request):
         return render(request, "tafl/login.html", context)
 
     #create user
-
+    newUser = User.objects.create_user(username=form.cleaned_data['username'],
+                                    password=form.cleaned_data['password1'],
+                                    email=form.cleaned_data['email'])
+    newUser.save()
 
     #create player
-
+    newPlayer = Player(user=newUser, cur_game=None)
+    newPlayer.save()
     
-
+    #log them in
+    newUser = authenticate(username=form.cleaned_data['username'],
+                           password=form.cleaned_data['password1'])
+    login(request, newUser)
     return redirect('/tafl/')

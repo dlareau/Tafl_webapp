@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=20)
-    password1 = forms.CharField(max_length=200, 
+    password = forms.CharField(max_length=200, 
                                 label='Password', 
                                 widget=forms.PasswordInput())
 
@@ -28,7 +28,7 @@ class RegistrationForm(forms.Form):
         return cleaned_data
 
     def clean_username(self):
-        username = cleaned_data.get('username')
+        username = self.cleaned_data.get('username')
         if User.objects.filter(username__exact=username):
             raise forms.ValidationError("username taken")
 

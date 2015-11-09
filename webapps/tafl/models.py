@@ -4,7 +4,7 @@ from django.utils import timezone
 
 class Player(models.Model):
     user = models.ForeignKey(User)
-    cur_game = models.ForeignKey('Game')
+    cur_game = models.ForeignKey('Game', blank=True, null=True)
     rank = models.IntegerField(default=0)
 
     def __unicode__(self):
