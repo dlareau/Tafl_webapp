@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+now = timezone.now()
+
 class Player(models.Model):
     user = models.ForeignKey(User)
     cur_game = models.ForeignKey('Game', blank=True, null=True)
@@ -21,6 +23,7 @@ class Game(models.Model):
     # history = Move list (Future expansion idea)
     ruleset = models.ForeignKey('Ruleset')
     winner = models.ForeignKey('Player', blank=True, related_name='won_games')
+    #timestamp = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return str(self.players.all())

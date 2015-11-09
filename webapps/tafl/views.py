@@ -8,12 +8,40 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 
+from itertools import chain
+
 from tafl.models import *
 from tafl.forms import *
 
 @login_required
 def gamespage(request):
-    return render(request, "tafl/mainpage.html")
+    context = {}
+
+    currUser = request.user
+    context['user'] = currUser
+
+    #sort - having migration issues, so commenting this out for now
+    #sortby = request.GET.get('sortby')
+    #if sortby == 'time' or not sortby:
+    #    # by time is default
+    #    games = Game.objects.all().order_by('-time')
+    #if sortby == 'rank':
+    #    games = Game.objects.all().order_by('waiting_player__rank')
+    #if sortby == 'color':
+    #    #citation for __isnull
+    #    #stackoverflow.com/questions/14831327/in-a-django-queryset-how-to-
+    #        # filter-for-not-exists-in-a-many-to-one-relationsh
+    #    bgames = Game.objects.filter(black_player__isnull=False)
+    #    wgames = Game.objects.filter(white_player__isnull=False)
+    #    ugames = Game.objects.filter(black_player__isnull=True).filter(white_player__isnull=True)
+    #    #citation for itertools chain: 
+    #    #stackoverflow.com/questions/431628/how-to-combine-2-or-more-querysets-in-a-django-view
+    #    games = chain(bgames, wgames, ugames)
+    #if sortby == 'variant':
+    #    games = Game.objects.all() #bc rn there's only tablut - implement actual sorting later
+    #    
+    context['games'] = Game.objects.all()
+    return render(request, "tafl/mainpage.html", context)
 
 @login_required
 def makegame(request):

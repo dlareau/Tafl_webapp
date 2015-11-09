@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tafl',
-    'ws4redis',
+    #'ws4redis',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -68,7 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'ws4redis.context_processors.default',
+                #'ws4redis.context_processors.default',
             ],
         },
     },
@@ -101,9 +101,9 @@ USE_L10N = True
 
 USE_TZ = True
 
-WS4REDIS_HEARTBEAT = "--Heartbeat--"
-WEBSOCKET_URL = '/ws/'
-WS4REDIS_EXPIRE = 0
+#WS4REDIS_HEARTBEAT = "--Heartbeat--"
+#WEBSOCKET_URL = '/ws/'
+#WS4REDIS_EXPIRE = 0
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
