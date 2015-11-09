@@ -6,6 +6,12 @@ def make_game(ruleset, black_player, white_player, waiting_player):
     g = Game(black_player=black_player, white_player=white_player, 
             waiting_player=waiting_player, turn=False, ruleset=ruleset, 
             timestamp=timezone.now())
+    if black_player != None:
+        g.waitingcolor="white"
+    elif white_player != None:
+        g.waitingcolor="black"
+    else:
+        g.waitingcolor="either"
     g.save()
     g.players.add(waiting_player)
     g.save()
