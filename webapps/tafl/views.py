@@ -49,13 +49,13 @@ def gamespage(request):
 @login_required
 @transaction.atomic
 def game(request):
+    p = Player.objects.get(user=request.user)
     # Post requests to game are move requests
     if(request.method == 'POST'):
         if("move" in request.POST and request.POST["move"] != ""):
             move = json.loads(request.POST["move"])
             g = request.user.player_set.all()[0].cur_game
             if(g.is_valid_move(move[0], move[1])):
-                p = Player.objects.get(user=request.user)
                 if(g.white_player == p):
                     send_move_update(g.black_player, move)
                 elif(g.black_player == p):
@@ -69,7 +69,9 @@ def game(request):
         else:
             return HttpResponse("invalid 4")
         return HttpResponse("invalid 5")
-    return render(request, "tafl/gamepage.html", {'game':Game.objects.all()[0]})
+
+    context = {'game':p.cur_game, 'player': p}
+    return render(request, "tafl/gamepage.html", context)
 
 @login_required
 def makegame(request):
@@ -81,7 +83,7 @@ def makegame(request):
             if(form.cleaned_data['optradio'] == "black"):
                 g = tafl.game.make_game(ruleset, player, None, player)
             elif(form.cleaned_data['optradio'] == "white"):
-                g = tafl.game.make_game(ruleset, player, player, None)
+                g = tafl.game.make_game(ruleset, None, player, player)
             elif(form.cleaned_data['optradio'] == "either"):
                 g = tafl.game.make_game(ruleset, None, None, player)
             else:

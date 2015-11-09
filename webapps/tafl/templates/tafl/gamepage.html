@@ -8,7 +8,6 @@
     
 {% block content %}
   <div id="labels" class="col-md-2">
-    <span id="id-opp"> <h3>Their name</h3> </span>
     <span id="resign-btn">
       <form action="/tafl/resign" method="post" onsubmit="return confirm('Are you sure you want to resign?');">
         {% csrf_token %}
@@ -16,7 +15,25 @@
       </form>
     </span>
     <span id="rules-btn"> <button class="btn">Rules</button> </span>
-    <span id="id-you"> <h3> Your name</h3> </span>
+    {% if game.white_player == player%}
+      <span id="id-you"> 
+        <h3>You:</h3>
+        <h3>{{game.white_player.user.username}}</h3> 
+      </span>
+      <span id="id-opp">
+        <h3>Opponent:</h3>
+        <h3>{{game.black_player.user.username}}</h3>
+      </span>
+    {% else %}
+      <span id="id-you">
+        <h3>You:</h3>
+        <h3>{{game.black_player.user.username}}</h3>
+      </span>
+      <span id="id-opp">
+        <h3>Opponent:</h3>
+        <h3>{{game.white_player.user.username}}</h3>
+      </span>
+    {% endif %}
   </div>
   <div id="board-container" class="col-md-7">
     {% regroup game.squares.all by x_coord as rows %}
