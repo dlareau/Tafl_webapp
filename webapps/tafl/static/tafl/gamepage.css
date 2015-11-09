@@ -1,0 +1,82 @@
+body{
+    margin:0px;
+    padding:0px;
+}
+
+hr {
+    border: 1px solid black;
+}
+
+.black {
+    background-color: black;
+}
+
+.white {
+    background-color: white;
+}
+
+#labels{
+    height: 630px;
+}
+
+#id-opp {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#id-you {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+}
+
+#resign-btn {
+    position: absolute;
+    top: 45%;
+    left: 0px;
+}
+
+#rules-btn {
+    position: absolute;
+    top: 55%;
+    left: 0px;
+}
+
+.board-row {
+    background-color: gray;
+    clear: left;
+}
+
+.board-cell {
+    background-color: white;
+    border: 1px solid black;
+    float: left;
+    width:70px;
+    height:70px;
+}
+
+.tafl-piece {
+    border: 1px solid black;
+    width:60px;
+    height: 60px;
+    border-radius: 30px;
+    margin: 4px;
+}
+
+#chat {
+    border: 1px solid black;
+    border-radius: 5px;
+    height: 630px;
+}
+
+#chat form {
+    position: absolute;
+    bottom: 0px;
+    width:100%;
+    left: 0px;
+}
+
+#ChatPostButton {
+    float:right;
+}

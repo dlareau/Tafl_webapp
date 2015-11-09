@@ -1,9 +1,40 @@
 {% extends "tafl/interior_base.html" %}
 {% block title %} Game Page {% endblock %}
 {% load staticfiles %}
+{% block scripts %}
+<link rel="stylesheet" href="{% static 'tafl/gamepage.css' %}">
+{% endblock %}
     
 {% block content %}
-  <div id="feed" class="col-md-10 col-md-offset-1" style="background-color:red">
-    stuff
+  <div id="labels" class="col-md-2">
+    <span id="id-opp"> <h3>Their name</h3> </span>
+    <span id="resign-btn"> <button class="btn">Resign</button> </span>
+    <span id="rules-btn"> <button class="btn">Rules</button> </span>
+    <span id="id-you"> <h3> Your name</h3> </span>
+  </div>
+  <div id="board-container" class="col-md-7">
+    {% for i in size %}
+      <div class='board-row'>
+        {% for j in size %}
+          <div class="board-cell">
+            {% if size|random > 7 %}
+              <div class="tafl-piece black"></div>
+            {% elif size|random > 7 %}
+              <div class="tafl-piece white"></div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+  <div id="chat" class="col-md-3">
+    <h2>Chat</h2>
+    <hr>
+    <form class="form" action="{% url 'game' %}" method="post">
+      {% csrf_token %}
+      <input type="text" id="inputUserPost" name="text" class="form-control" 
+       placeholder="Chat here" required autofocus>
+      <button id="ChatPostButton" class="btn btn-primary" type="submit">Submit</button>
+    </form>
   </div>
 {% endblock %}

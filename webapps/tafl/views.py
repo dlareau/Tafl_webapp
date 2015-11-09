@@ -17,7 +17,7 @@ def gamespage(request):
 
 @login_required
 def game(request):
-    return render(request, "tafl/gamepage.html")
+    return render(request, "tafl/gamepage.html", {'size': range(9)})
 
 @login_required
 def makegame(request):

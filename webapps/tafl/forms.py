@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from tafl.models import *
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=20)
@@ -33,3 +34,8 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError("username taken")
 
         return username
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = ChatMessage
+        fields = ['text']
