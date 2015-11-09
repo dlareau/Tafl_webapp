@@ -195,3 +195,17 @@ def register(request):
     login(request, newUser)
     return redirect('/tafl/')
 
+@login_required
+def resign(request):
+    p = Player.objects.get(user=request.user)
+    print(p)
+    if(p.cur_game.black_player == p):
+        p.cur_game.winner = p.cur_game.white_player
+    elif(p.cur_game.white_player == p):
+        p.cur_game.winner = p.cur_game.black_player
+    else:
+        print("what?")
+    p.cur_game.save()
+    p.cur_game = None
+    p.save()
+    return gamespage(request)

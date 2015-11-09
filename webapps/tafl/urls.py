@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^usersearch', 'tafl.views.usersearch', name='usersearch'),
     url(r'^profile', 'tafl.views.profile', name='view'),
     url(r'^whatis$', 'tafl.views.about', name='about'),
+    url(r'^resign$', 'tafl.views.resign', name='resign')
 ]
