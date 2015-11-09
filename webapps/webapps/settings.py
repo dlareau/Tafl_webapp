@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tafl',
-#    'ws4redis',
+    'ws4redis',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -69,14 +69,14 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.core.context_processors.static',
- #               'ws4redis.context_processors.default',
+                'ws4redis.context_processors.default',
             ],
         },
     },
 ]
 
-#WSGI_APPLICATION = 'ws4redis.django_runserver.application'
-WSGI_APPLICATION = 'webapps.wsgi.application'
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+#WSGI_APPLICATION = 'webapps.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases

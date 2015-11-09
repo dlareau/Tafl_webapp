@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-#from ws4redis.publisher import RedisPublisher
-#from ws4redis.redis_store import RedisMessage
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 
 from django.http import Http404, HttpResponse
 from django.db import transaction
@@ -11,7 +11,7 @@ import json
 
 from itertools import chain
 
-#from tafl.redis import *
+from tafl.redis import *
 from tafl.models import *
 from tafl.forms import *
 import tafl.game
@@ -61,10 +61,14 @@ def game(request):
                 elif(g.black_player == p):
                     send_move_update(g.white_player, move)
                 else:
-                    return HttpResponse("invalid")
+                    return HttpResponse("invalid 1")
                 g.make_move(move[0], move[1])
                 return HttpResponse("valid")
-        return HttpResponse("invalid")
+            else:
+                return HttpResponse("invalid 2")
+        else:
+            return HttpResponse("invalid 4")
+        return HttpResponse("invalid 5")
     return render(request, "tafl/gamepage.html", {'game':Game.objects.all()[0]})
 
 @login_required
@@ -77,7 +81,7 @@ def makegame(request):
             if(form.cleaned_data['optradio'] == "black"):
                 g = tafl.game.make_game(ruleset, player, None, player)
             elif(form.cleaned_data['optradio'] == "white"):
-                g = tafl.game.make_game(ruleset, player, None, player)
+                g = tafl.game.make_game(ruleset, player, player, None)
             elif(form.cleaned_data['optradio'] == "either"):
                 g = tafl.game.make_game(ruleset, None, None, player)
             else:

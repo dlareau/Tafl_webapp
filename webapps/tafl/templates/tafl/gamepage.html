@@ -18,7 +18,7 @@
     {% for row in rows %}
       <div class='board-row'>
         {% for cell in row.list|dictsort:"y_coord" %}
-          <div data-id="[{{cell.x_coord}},{{cell.y_coord}}]" class="board-cell">
+          <div data-id="[{{cell.x_coord}}, {{cell.y_coord}}]" class="board-cell">
             {% if cell.member.color == "BL" %}
               <div class="tafl-piece black"></div>
             {% elif cell.member.color == "WH" %}
@@ -71,12 +71,15 @@
         $.ajax({
           type: 'POST',
           url: "{% url 'game' %}",
-          data: {move: "[" + piece.parent().attr('data-id') + "," + $(this).attr('data-id') + "]"},
+          data: {move: "[" + piece.parent().attr('data-id') + ", " + $(this).attr('data-id') + "]"},
           success: function (html) {
             console.log(piece.parent().attr('data-id') + " => " + dest.attr('data-id'));
             if(html == "valid"){
               var temp = piece.detach();
               dest.append(temp);
+            }
+            else{
+              console.log(html);
             }
           },
           error: function (html) {
@@ -104,10 +107,8 @@
 
     function receiveMessage(msg) {
       //TODO: Neater
-      var src = $('[data-id="' + msg.slice(0,5) + '"]').children(":first");
-      var dst = $('[data-id="' + msg.slice(5,10) + '"]');
-      console.log(src);
-      console.log(dst);
+      src = $('[data-id="' + msg.slice(1,7) + '"]').children(":first");
+      dst = $('[data-id="' + msg.slice(9,15) + '"]');
       var temp = src.detach();
       dst.append(temp);
     }

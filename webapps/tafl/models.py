@@ -30,7 +30,12 @@ class Game(models.Model):
             s1 = self.squares.get(x_coord=first_pos[0], y_coord=first_pos[1])
             s2 = self.squares.get(x_coord=second_pos[0], y_coord=second_pos[1])
             if(s1.member and not s2.member):
-                return True;
+                if((s1.member.color == "BL" and not self.turn) or (s1.member.color == "WH" and self.turn)):
+                    return True;
+            else:
+                print("Invalid 1")
+        else:
+            print("Invalid 2")
         return False;
 
     def make_move(self, first_pos, second_pos):  
@@ -38,6 +43,8 @@ class Game(models.Model):
         s2 = self.squares.get(x_coord=second_pos[0], y_coord=second_pos[1])
         s2.member = s1.member;
         s1.member = None;
+        self.turn = not self.turn
+        self.save()
         s1.save()
         s2.save()
 
