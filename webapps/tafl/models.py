@@ -19,6 +19,7 @@ class Game(models.Model):
     # ^ A holding spot for when we know a player is waiting in a game, but 
     # we don't know what color they are yet. 
     players = models.ManyToManyField('Player', related_name="games", blank=True)
+    waitingcolor = models.CharField(max_length=6)
     turn = models.BooleanField()
     # history = Move list (Future expansion idea)
     ruleset = models.ForeignKey('Ruleset')

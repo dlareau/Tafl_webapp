@@ -58,21 +58,27 @@
 	<div class="panel panel-default">
 	  <div class="panel-body">
 	    <div class="row">
-	      <div class="col-md-6">
-		<h4>{{ game.player.user.username }} ({{ game.player.rank }})</h4>
+	      <div class="col-md-2">
+		<h4><a href="/tafl/profile?un={{game.waiting_player.user.username}}">
+		    {{ game.waiting_player.user.username }}
+		</a></h4>
 	      </div>
-	      <div class="col-md-4"></div>
-	      <div class="col-md-1">
-		<h4>{{ game.takencolor }}</h4>
+	      <div class="col-md-4"> <h4>({{ game.waiting_player.rank }})</h4></div>
+	      <div class="col-md-3">
+		<h4>waiting for: {{ game.waitingcolor }}</h4>
 	      </div>
 	    </div>
 	    <div class="row">
 	      <div class="col-md-3">
-		Version
+		<h4>{{ game.ruleset.name }}</h4>
 	      </div>
 	      <div class="col-md-6"></div>
 	      <div class="col-md-3">
-		<button class="btn btn-primary" type="submit">Join</button>
+		<form action="/tafl/joingame" method="POST">
+		  <input type="hidden" name="gameid" value="{{game.id}}">
+		  {% csrf_token %}
+		  <button class="btn btn-primary" type="submit">Join</button>
+		</form>
 	      </div>
 	    </div>
 	  </div>

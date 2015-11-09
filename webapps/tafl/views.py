@@ -10,6 +10,7 @@ from django.contrib.auth import login, logout, authenticate
 import json
 
 from itertools import chain
+import random
 
 from tafl.redis import *
 from tafl.models import *
@@ -43,7 +44,7 @@ def gamespage(request):
     #if sortby == 'variant':
     #    games = Game.objects.all() #bc rn there's only tablut - implement actual sorting later
     #    
-    context['games'] = Game.objects.all()
+    context['games'] = Game.objects.filter(waiting_player__isnull=False)
     return render(request, "tafl/mainpage.html", context)
 
 @login_required
@@ -97,7 +98,35 @@ def makegame(request):
 
 @login_required
 def joingame(request):
-    return None
+    context = {}
+
+    usr = request.user
+    player = Player.objects.get(user=usr)
+    gameid = request.POST['gameid']
+    g = Game.objects.get(pk=gameid)
+
+    #set player 2
+    if g.black_player != None:
+        g.white_player = player
+    elif g.white_player != None:
+        g.black_player = player
+    else: #either case, for now randomly assign
+        coinflip = random.randint(0,1)
+        if coinflip:
+            g.white_player = player
+            g.black_player = g.waiting_player
+        else:
+            g.white_player = g.waiting_player
+            g.black_player = player
+
+    g.waiting_player = None #cleanup
+    player.cur_game = g
+
+    g.save()
+    player.save()
+
+    request.method="GET"
+    return game(request)
 
 @login_required
 def usersearch(request):
