@@ -39,3 +39,7 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = ChatMessage
         fields = ['text']
+
+class GameForm(forms.Form):
+    optradio = forms.CharField(max_length=20)
+    ruleset = forms.CharField(max_length=20)

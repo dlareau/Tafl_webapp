@@ -43,7 +43,7 @@ class Game(models.Model):
 
 
     def __unicode__(self):
-        return str(self.players.all())
+        return str(self.timestamp)
 
 class Piece(models.Model):
     game = models.ForeignKey('Game', related_name='pieces')

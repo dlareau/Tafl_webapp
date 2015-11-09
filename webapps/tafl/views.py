@@ -14,6 +14,7 @@ from itertools import chain
 #from tafl.redis import *
 from tafl.models import *
 from tafl.forms import *
+import tafl.game
 
 @login_required
 def gamespage(request):
@@ -68,7 +69,25 @@ def game(request):
 
 @login_required
 def makegame(request):
-    return None
+    if(request.method == 'POST'):
+        form = GameForm(request.POST)
+        if form.is_valid():
+            ruleset = Ruleset.objects.get(name=form.cleaned_data['ruleset'])
+            player = Player.objects.get(user=request.user)
+            if(form.cleaned_data['optradio'] == "black"):
+                g = tafl.game.make_game(ruleset, player, None, player)
+            elif(form.cleaned_data['optradio'] == "white"):
+                g = tafl.game.make_game(ruleset, player, None, player)
+            elif(form.cleaned_data['optradio'] == "either"):
+                g = tafl.game.make_game(ruleset, None, None, player)
+            else:
+                g = tafl.game.make_game(ruleset, None, None, player)
+
+            player.cur_game = g;
+            player.save()
+
+    request.method="GET"
+    return game(request)
 
 @login_required
 def joingame(request):

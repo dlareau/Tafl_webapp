@@ -13,16 +13,16 @@
 	    <form role="form" class="form horizontal" method="post" action="{% url 'makegame'  %}">
 	      <label>color</label>
 	      <div class="radio">
-		<label><input type="radio" name="optradio">black</label>
+		<label><input type="radio" name="optradio" value="black">black</label>
 	      </div>
 	      <div class="radio">
-		<label><input type="radio" name="optradio">white</label>
+		<label><input type="radio" name="optradio" value="white">white</label>
 	      </div>
 	      <div class="radio">
-		<label><input type="radio" name="optradio">either</label>
+		<label><input type="radio" name="optradio" value="either">either</label>
 	      </div>
 	      <label for="sel1">variant:</label>
-	      <select class="form-control" id="sel1">
+	      <select name="ruleset" class="form-control" id="sel1">
 		<option>Tablut</option>
 	      </select>
 	      <input type="submit" class="btn btn-primary" value="Make Game">

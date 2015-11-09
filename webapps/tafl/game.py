@@ -1,9 +1,13 @@
 from tafl.models import *
+from django.utils import timezone
 import json
 
 def make_game(ruleset, black_player, white_player, waiting_player):
     g = Game(black_player=black_player, white_player=white_player, 
-            waiting_player=waiting_player, turn=False, ruleset=ruleset)
+            waiting_player=waiting_player, turn=False, ruleset=ruleset, 
+            timestamp=timezone.now())
+    g.save()
+    g.players.add(waiting_player)
     g.save()
 
     for row in range(ruleset.size):
@@ -16,3 +20,5 @@ def make_game(ruleset, black_player, white_player, waiting_player):
         s = Square.objects.get(game=g, x_coord=piece[1], y_coord=piece[2])
         s.member = p
         s.save()
+
+    return g
