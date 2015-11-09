@@ -8,9 +8,28 @@
     <div class="panel panel-default">
       <div class="panel-body">
 	<h3>Create New Game</h3>
-	<form role="form" class="form horizontal" method="post" action="{% url 'makegame'  %}">
-	  {{ mgform }}
-	</form>
+	<div class="panel panel-default">
+	  <div class="panel-body">
+	    <form role="form" class="form horizontal" method="post" action="{% url 'makegame'  %}">
+	      <label>color</label>
+	      <div class="radio">
+		<label><input type="radio" name="optradio">black</label>
+	      </div>
+	      <div class="radio">
+		<label><input type="radio" name="optradio">white</label>
+	      </div>
+	      <div class="radio">
+		<label><input type="radio" name="optradio">either</label>
+	      </div>
+	      <label for="sel1">variant:</label>
+	      <select class="form-control" id="sel1">
+		<option>Tablut</option>
+	      </select>
+	      <input type="submit" class="btn btn-primary" value="Make Game">
+	      {% csrf_token %}
+	    </form>
+	  </div>
+	</div>
       </div>
       <div class="panel-body">
 	<h3>Join a Game</h3>
