@@ -11,16 +11,16 @@ class Player(models.Model):
         return self.user.username
 
 class Game(models.Model):
-    black_player = models.ForeignKey('Player', related_name='black_games')
-    white_player = models.ForeignKey('Player', related_name='white_games')
-    waiting_player = models.ForeignKey('Player', related_name='waiting_games')
+    black_player = models.ForeignKey('Player', related_name='black_games', blank=True, null=True)
+    white_player = models.ForeignKey('Player', related_name='white_games', blank=True, null=True)
+    waiting_player = models.ForeignKey('Player', related_name='waiting_games', blank=True, null=True)
     # ^ A holding spot for when we know a player is waiting in a game, but 
-    # we don' know what color they are yet. 
-    players = models.ManyToManyField('Player', blank=True, related_name="games")
+    # we don't know what color they are yet. 
+    players = models.ManyToManyField('Player', related_name="games", blank=True)
     turn = models.BooleanField()
     # history = Move list (Future expansion idea)
     ruleset = models.ForeignKey('Ruleset')
-    winner = models.ForeignKey('Player', blank=True, related_name='won_games')
+    winner = models.ForeignKey('Player', related_name='won_games', blank=True, null=True)
 
     def __unicode__(self):
         return str(self.players.all())
@@ -31,7 +31,7 @@ class Piece(models.Model):
         ('KING', 'King'),
         ('PAWN', 'Pawn'),
     )
-    p_type = models.CharField(choices=PIECE_TYPES, max_length=2)
+    p_type = models.CharField(choices=PIECE_TYPES, max_length=4)
     PIECE_COLORS = (
         ('BL', 'Black'),
         ('WH', 'White'),
@@ -45,7 +45,7 @@ class Square(models.Model):
     game = models.ForeignKey('Game', related_name='squares')
     x_coord = models.IntegerField()
     y_coord = models.IntegerField()
-    member = models.ForeignKey('Piece')
+    member = models.ForeignKey('Piece', blank=True, null=True)
 
     def __unicode__(self):
         return str(self.pk) + ": (" + str(self.x_coord) + ", " + str(self.y_coord) + ")"

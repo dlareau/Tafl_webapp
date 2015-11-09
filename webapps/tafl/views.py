@@ -7,17 +7,36 @@ from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
+import json
 
 from tafl.models import *
 from tafl.forms import *
 
 @login_required
 def gamespage(request):
-    return render(request, "tafl/mainpage.html")
+    return render(request, "tafl/mainpage.html", {'games':Game.objects.all()})
 
 @login_required
 def game(request):
-    return render(request, "tafl/gamepage.html", {'size': range(9)})
+    # Post requests to game are move requests
+    if(request.method == 'POST'):
+        g = request.user.player_set.all()[0].cur_game
+        if("move" in request.POST and request.POST["move"] != ""):
+            move = json.loads(request.POST["move"])
+            # is the move a lateral move?
+            if(move[0][0] == move[1][0] or move[0][1] == move[1][1]):
+                s1 = Square.objects.get(game=g, x_coord=move[0][0], y_coord=move[0][1])
+                s2 = Square.objects.get(game=g, x_coord=move[1][0], y_coord=move[1][1])
+                # is the space occupied?
+                if(s1.member and not s2.member):
+                    # Move the things
+                    s2.member = s1.member;
+                    s1.member = None;
+                    s1.save()
+                    s2.save()
+                    return HttpResponse("valid")
+        return HttpResponse("invalid")
+    return render(request, "tafl/gamepage.html", {'game':Game.objects.all()[0]})
 
 @login_required
 def makegame(request):
@@ -94,3 +113,4 @@ def register(request):
                            password=form.cleaned_data['password1'])
     login(request, newUser)
     return redirect('/tafl/')
+

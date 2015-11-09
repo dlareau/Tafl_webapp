@@ -13,13 +13,14 @@
     <span id="id-you"> <h3> Your name</h3> </span>
   </div>
   <div id="board-container" class="col-md-7">
-    {% for i in size %}
+    {% regroup game.squares.all by x_coord as rows %}
+    {% for row in rows %}
       <div class='board-row'>
-        {% for j in size %}
-          <div class="board-cell">
-            {% if size|random > 7 %}
+        {% for cell in row.list|dictsort:"y_coord" %}
+          <div data-id="[{{cell.x_coord}},{{cell.y_coord}}]" class="board-cell">
+            {% if cell.member.color == "BL" %}
               <div class="tafl-piece black"></div>
-            {% elif size|random > 7 %}
+            {% elif cell.member.color == "WH" %}
               <div class="tafl-piece white"></div>
             {% endif %}
           </div>
@@ -37,4 +38,60 @@
       <button id="ChatPostButton" class="btn btn-primary" type="submit">Submit</button>
     </form>
   </div>
+  <script>
+    var clicked = false;
+    var piece = null;
+    var dest = null;
+
+    function getCookie(c_name)
+    {
+      if (document.cookie.length > 0)
+      {
+        c_start = document.cookie.indexOf(c_name + "=");
+        if (c_start != -1)
+        {
+          c_start = c_start + c_name.length + 1;
+          c_end = document.cookie.indexOf(";", c_start);
+          if (c_end == -1) c_end = document.cookie.length;
+          return unescape(document.cookie.substring(c_start,c_end));
+        }
+      }
+      return "";
+    }
+
+    $(function () {
+      $.ajaxSetup({
+        headers: { "X-CSRFToken": getCookie("csrftoken") }
+      });
+    });
+
+    $('.board-cell').click(function(event) {
+      if(clicked){  
+        dest = $(this);
+        $.ajax({
+          type: 'POST',
+          url: "{% url 'game' %}",
+          data: {move: "[" + piece.parent().attr('data-id') + "," + $(this).attr('data-id') + "]"},
+          success: function (html) {
+            console.log(piece.parent().attr('data-id') + " => " + dest.attr('data-id'));
+            if(html == "valid"){
+              var temp = piece.detach();
+              dest.append(temp);
+            }
+          },
+          error: function (html) {
+            console.log(html);
+          }
+        });
+        clicked = false;
+      }
+    });
+
+    $('.tafl-piece').click(function(event) {
+      event.stopPropagation();
+      clicked = true;
+      piece = $(this);
+
+    });
+  </script>
 {% endblock %}
