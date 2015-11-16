@@ -56,26 +56,28 @@ def gamespage(request):
 @login_required
 @transaction.atomic
 def game(request):
+    # Get player
     p = Player.objects.get(user=request.user)
     # Post requests to game are move requests
-    if(request.method == 'POST'):
-        if("move" in request.POST and request.POST["move"] != ""):
-            move = json.loads(request.POST["move"])
-            g = request.user.player_set.all()[0].cur_game
-            if(g.is_valid_move(move[0], move[1])):
-                if(g.white_player == p):
-                    send_move_update(g.black_player, move)
-                elif(g.black_player == p):
-                    send_move_update(g.white_player, move)
-                else:
-                    return HttpResponse("invalid 1")
-                g.make_move(move[0], move[1])
-                return HttpResponse("valid")
-            else:
-                return HttpResponse("invalid 2")
-        else:
-            return HttpResponse("invalid 4")
-        return HttpResponse("invalid 5")
+    if(request.method == 'POST' and "move" in request.POST and request.POST["move"] != ""):
+        # Get game and move
+        move = json.loads(request.POST["move"])
+        g = request.user.player_set.all()[0].cur_game
+
+        # Check if move is valid
+        if(not g.is_valid_move(move[0], move[1])):
+            return HttpResponse("invalid 1")
+
+        # Move was valid, check for other player and send the move update
+        if(g.other_player(p) != None):
+            send_move_update(g.other_player(p), move)
+
+        # Check for capture and make capture
+        # Check for win and do win things if appropriate
+
+        # Commit move to database
+        g.make_move(move[0], move[1])
+        return HttpResponse("valid")
 
     context = {'game':p.cur_game, 'player': p}
     return render(request, "tafl/gamepage.html", context)
@@ -232,16 +234,15 @@ def register(request):
     return redirect('/tafl/')
 
 @login_required
+@transaction.atomic
 def resign(request):
     p = Player.objects.get(user=request.user)
-    print(p)
-    if(p.cur_game.black_player == p):
-        p.cur_game.winner = p.cur_game.white_player
-    elif(p.cur_game.white_player == p):
-        p.cur_game.winner = p.cur_game.black_player
-    else:
-        print("what?")
-    p.cur_game.save()
+    p2 = p.cur_game.other_player(p)
+    if(p2 != None):
+        p.cur_game.winner = p2
+        p.cur_game.save()
+        p2.cur_game = None
+        p2.save()
     p.cur_game = None
     p.save()
     return gamespage(request)

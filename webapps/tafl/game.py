@@ -13,8 +13,6 @@ def make_game(ruleset, black_player, white_player, waiting_player):
     else:
         g.waitingcolor="either"
     g.save()
-    g.players.add(waiting_player)
-    g.save()
 
     for row in range(ruleset.size):
         for col in range(ruleset.size):
@@ -28,3 +26,5 @@ def make_game(ruleset, black_player, white_player, waiting_player):
         s.save()
 
     return g
+
+

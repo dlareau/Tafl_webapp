@@ -18,7 +18,6 @@ class Game(models.Model):
     waiting_player = models.ForeignKey('Player', related_name='waiting_games', blank=True, null=True)
     # ^ A holding spot for when we know a player is waiting in a game, but 
     # we don't know what color they are yet. 
-    players = models.ManyToManyField('Player', related_name="games", blank=True)
     waitingcolor = models.CharField(max_length=6)
     turn = models.BooleanField()
     # history = Move list (Future expansion idea)
@@ -26,10 +25,25 @@ class Game(models.Model):
     winner = models.ForeignKey('Player', related_name='won_games', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    def is_valid_move(self, first_pos, second_pos):
-        if(first_pos[0] == second_pos[0] or first_pos[1] == second_pos[1]):      
-            s1 = self.squares.get(x_coord=first_pos[0], y_coord=first_pos[1])
-            s2 = self.squares.get(x_coord=second_pos[0], y_coord=second_pos[1])
+    # Returns true if there are no pieces between pos1 and pos2 (exclusive)
+    def is_move_clear(self, pos1, pos2):
+        if(pos1[0] == pos2[0]):
+            max_y = max(pos1[1], pos2[1])
+            min_y = min(pos1[1], pos2[1])
+            return not self.pieces.filter(square__x_coord=pos1[0], 
+                square__y_coord__gt=min_y, square__y_coord__lt=max_y).exists()
+        if(pos1[1] == pos2[1]):
+            max_x = max(pos1[0], pos2[0])
+            min_x = min(pos1[0], pos2[0])
+            return not self.pieces.filter(square__y_coord=pos1[1], 
+                square__x_coord__gt=min_x, square__x_coord__lt=max_x).exists()
+        return false
+
+    # Returns true if the move is valid in the context of the current game
+    def is_valid_move(self, pos1, pos2):
+        if self.is_move_clear(pos1, pos2) and (pos2[0] != 5 or pos2[1] != 5):
+            s1 = self.squares.get(x_coord=pos1[0], y_coord=pos1[1])
+            s2 = self.squares.get(x_coord=pos2[0], y_coord=pos2[1])
             if(s1.member and not s2.member):
                 if((s1.member.color == "BL" and not self.turn) or (s1.member.color == "WH" and self.turn)):
                     return True;
@@ -39,9 +53,10 @@ class Game(models.Model):
             print("Invalid 2")
         return False;
 
-    def make_move(self, first_pos, second_pos):  
-        s1 = self.squares.get(x_coord=first_pos[0], y_coord=first_pos[1])
-        s2 = self.squares.get(x_coord=second_pos[0], y_coord=second_pos[1])
+    # Moves the piece in pos1 to pos2
+    def make_move(self, pos1, pos2):  
+        s1 = self.squares.get(x_coord=pos1[0], y_coord=pos1[1])
+        s2 = self.squares.get(x_coord=pos2[0], y_coord=pos2[1])
         s2.member = s1.member;
         s1.member = None;
         self.turn = not self.turn
@@ -49,6 +64,18 @@ class Game(models.Model):
         s1.save()
         s2.save()
 
+    def players(self):
+        return [self.black_player, self.white_player]
+
+    # Given one player in the game, it will return the other player or 
+    # None if there is no other player.
+    def other_player(self, player):
+        if(self.white_player == player):
+            return self.black_player
+        elif(self.black_player == player):
+            return self.white_player
+        else:
+            return None
 
     def __unicode__(self):
         return str(self.timestamp)
@@ -73,7 +100,7 @@ class Square(models.Model):
     game = models.ForeignKey('Game', related_name='squares')
     x_coord = models.IntegerField()
     y_coord = models.IntegerField()
-    member = models.ForeignKey('Piece', blank=True, null=True)
+    member = models.OneToOneField('Piece', blank=True, null=True)
 
     def __unicode__(self):
         return str(self.pk) + ": (" + str(self.x_coord) + ", " + str(self.y_coord) + ")"
