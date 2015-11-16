@@ -22,34 +22,43 @@ Tafl is a family of ancient boardgames which were precursors to chess. Gameplay 
 <h2 id="tablut">Tablut</h2>
 <h4> Setup </h4>
 <p>Tablut is played on a 9x9 board. The game begins with pieces arranged as so:</p>
-<!-- @TODO add diagram -->
+
+<!--@TODO better alt text. also @TODO explain the dang pieces -->
+<img src="{% static "tafl/tablutBoard.png" %}" alt="diagram of a tablut board" class="img-responsive"/>
 
 <h4>Movement</h4>
 <p>
 If you are familiar with chess - all pieces move like rooks. If you aren't: this means that pieces may move horizontally or vertically, but not diagonally, and they may move as far as they have room to. Meaning, if there is another piece in the way, you can't jump over it in any way.
 </p>
-<!-- movement diagrams -->
+
+<img src="{% static "tafl/tablutMovement.png" %}" alt="movement diagrams" class="img-responsive"/>
+
 <p>
 In Tablut, pieces may not stop on the center square of the board (the space where the king starts, aka the throne). Once the king has moved off of it, even he cannot return to sit there. However, pieces are allowed to move across it.
 </p>
-<!-- diagram -->
+
+<img src="{% static "tafl/tablutThrone.png" %}" alt="throne movement diagram" class="img-responsive"/>
+
 <p>
-The corner spaces of the board are also off limits.
+The corner spaces of the board are also off limits (hence the Xs).
 </p>
-<!-- diagram-->
+
 
 <h4>Capturing</h4>
 <p>
 Pawns are captured by sandwiching them between two pieces of your own color, as seen below. Both players may capture pawns, however note that the king is weaponless and thus cannot be one of the capturing pieces.
 </p>
-<!--@TODO diagram-->
+
+<img src="{% static "tafl/tablutCapture.png" %}" alt="tablut pawn capture" class="img-responsive"/>
+
 <p>
 The king is captured by surrounding him on all four sides.
 </p>
-<!-- diagram -->
+
+<img src="{% static "tafl/tablutCaptureKing.png" %}" alt="tablut king capture" class="img-responsive"/>
+
 <p>
 <u>What if I move a piece in between two enemy pieces?</u></br>
-<!-- diagram -->
 Your piece is not captured if this happens.
 </p>
 
@@ -57,11 +66,12 @@ Your piece is not captured if this happens.
 <p>
 Black wins by capturing white's king, as described above.
 </p>
-<!--diagram-->
+
 <p>
 White wins by getting the king to any edge square of the board.
 </p>
-<!--diagram-->
+
+<img src="{% static "tafl/tablutWinzones.png" %}" alt="winzones" class="img-responsive"/>
 
 <!--h4>Tablut Variants</h4-->
 
