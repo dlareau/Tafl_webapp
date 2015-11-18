@@ -41,7 +41,8 @@ class Game(models.Model):
 
     # Returns true if the move is valid in the context of the current game
     def is_valid_move(self, pos1, pos2):
-        if self.is_move_clear(pos1, pos2) and (pos2[0] != 5 or pos2[1] != 5):
+        if (self.is_move_clear(pos1, pos2) and not 
+           (pos2[0] == self.ruleset.size/2 and pos2[1] == self.ruleset.size/2)):
             s1 = self.squares.get(x_coord=pos1[0], y_coord=pos1[1])
             s2 = self.squares.get(x_coord=pos2[0], y_coord=pos2[1])
             if(s1.member and not s2.member):

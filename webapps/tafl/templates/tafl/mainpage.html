@@ -11,7 +11,8 @@
 	<div class="panel panel-default">
 	  <div class="panel-body">
 	    <form role="form" class="form horizontal" method="post" action="{% url 'makegame'  %}">
-	      <label>color</label>
+	      <label>Color:</label>
+	      <div>
 	      <div class="radio">
 		<label><input type="radio" name="optradio" value="black">black</label>
 	      </div>
@@ -21,7 +22,8 @@
 	      <div class="radio">
 		<label><input type="radio" name="optradio" value="either">either</label>
 	      </div>
-	      <label for="sel1">variant:</label>
+	  </div>
+	      <label for="sel1">Variant:</label>
 	      <select name="ruleset" class="form-control" id="sel1">
 		<option>Tablut</option>
 	      </select>

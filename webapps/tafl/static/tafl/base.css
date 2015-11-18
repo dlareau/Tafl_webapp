@@ -1,0 +1,31 @@
+body {
+    background-color: lightblue;
+}
+
+.btn {
+    background-color: cornflowerblue;
+    color: white;
+}
+
+.navbar-default{
+    background-color: #99C4D2;
+    border-color: #85B0BE;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: black;
+}
+
+.navbar-default .navbar-brand {   
+    color: black;
+}
+
+.checkbox, .radio {
+    display: inline-block;
+    margin-top: 0px;
+    margin: 10px;
+}
+
+.form-control {
+    margin-bottom: 10px;
+}

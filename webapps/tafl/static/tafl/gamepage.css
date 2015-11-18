@@ -12,7 +12,7 @@ hr {
 }
 
 .white {
-    background-color: white;
+    background-color: ghostwhite;
 }
 
 #labels{
@@ -44,12 +44,11 @@ hr {
 }
 
 .board-row {
-    background-color: gray;
     clear: left;
 }
 
 .board-cell {
-    background-color: white;
+    background-color: khaki;
     border: 1px solid black;
     float: left;
     width:70px;
@@ -68,6 +67,7 @@ hr {
     border: 1px solid black;
     border-radius: 5px;
     height: 630px;
+    background-color: ghostwhite;
 }
 
 #chat form {

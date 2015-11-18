@@ -79,6 +79,8 @@ def game(request):
         g.make_move(move[0], move[1])
         return HttpResponse("valid")
 
+    if(p.cur_game == None):
+        return redirect('/tafl/') 
     context = {'game':p.cur_game, 'player': p}
     return render(request, "tafl/gamepage.html", context)
 
@@ -132,8 +134,7 @@ def joingame(request):
     g.save()
     player.save()
 
-    request.method="GET"
-    return game(request)
+    return redirect('/tafl/game') 
 
 @login_required
 def usersearch(request):
@@ -245,4 +246,4 @@ def resign(request):
         p2.save()
     p.cur_game = None
     p.save()
-    return gamespage(request)
+    return redirect('/tafl/') 
