@@ -134,5 +134,11 @@
       var temp = src.detach();
       dst.append(temp);
     }
+
+    $(window).resize(function() {
+      size = ($("#board-container").width()-36)/9
+      $(".board-cell").width(size);
+      $(".board-cell").height(size);
+    });
   </script>
 {% endblock %}
