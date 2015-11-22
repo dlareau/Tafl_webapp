@@ -73,7 +73,10 @@ def game(request):
             send_move_update(g.other_player(p), move)
 
         # Check for capture and make capture
+        g.check_capture(move[0], move[1])
+
         # Check for win and do win things if appropriate
+        #g.check_win(move[0], move[1])
 
         # Commit move to database
         g.make_move(move[0], move[1])
