@@ -100,8 +100,22 @@ class Game(models.Model):
                         delS.save()
 
     def check_win(self, pos1, pos2):
+        sq = self.squares.filter(x_coord=pos1[0], y_coord=pos1[1])[0]
+        if (sq.member.color == "WH" and sq.member.p_type == "KING"):
+            if (self.ruleset.win_cond == "EDGE"):
+                if (pos2[0] == 0 or pos2[0] == (self.ruleset.size-1)
+                    or pos2[1] == 0 or pos2[1] == (self.ruleset.size-1)):
+                    print "white wins!"
+            #elif (self.ruleset.win_cond == "CORNER"):
+            #@TODO implement when we add something besides Tablut
+        #elif (sq.member.color == "BL"):
+            
+
+
         #if king, check his win conds, checking EDGE/CORNER
+
         #if black, check king capture
+        
         return False
 
     # Moves the piece in pos1 to pos2
