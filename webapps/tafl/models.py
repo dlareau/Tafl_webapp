@@ -42,10 +42,8 @@ class Game(models.Model):
 
     # Returns true if the move is valid in the context of the current game
     def is_valid_move(self, pos1, pos2):
-        print "in isvalidmove"
         if (self.is_move_clear(pos1, pos2) and not 
            (pos2[0] == self.ruleset.size/2 and pos2[1] == self.ruleset.size/2)):
-            print "move was clear"
             s1 = self.squares.get(x_coord=pos1[0], y_coord=pos1[1])
             s2 = self.squares.get(x_coord=pos2[0], y_coord=pos2[1])
             if(s1.member and not s2.member):
@@ -65,14 +63,35 @@ class Game(models.Model):
         #get own color
         mycolor = self.squares.get(x_coord=pos1[0], y_coord=pos1[1]).member.color
 
-        s = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]+1)
+        #right neighbor square
+        rs = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]+1)
+        rs2 = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]+2)
+        if (rs.exists() and rs2.exists()):
+            self.check_capture_singledir(mycolor, rs, rs2)
 
-        if (s.exists() and s[0].member != None):
+        #left
+        ls = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]-1)
+        ls2 = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]-2)
+        if (ls.exists() and ls2.exists()):
+            self.check_capture_singledir(mycolor, ls, ls2)
+
+        #down
+        ds = self.squares.filter(x_coord=pos2[0]+1, y_coord=pos2[1])
+        ds2 = self.squares.filter(x_coord=pos2[0]+2, y_coord=pos2[1])
+        if (ds.exists() and ds2.exists()):
+            self.check_capture_singledir(mycolor, ds, ds2)
+
+        #up
+        us = self.squares.filter(x_coord=pos2[0]-1, y_coord=pos2[1])
+        us2 = self.squares.filter(x_coord=pos2[0]-2, y_coord=pos2[1])
+        if (us.exists() and us2.exists()):
+            self.check_capture_singledir(mycolor, us, us2)
+
+    def check_capture_singledir(self, mycolor, s, s2):
+        if s[0].member != None:
             if ((s[0].member.color != mycolor) and (s[0].member.p_type != "KING")): 
-                #last bc checking king capture in check_win
-                #check one more over
-                s2 = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]+2)
-                if (s2.exists() and s2[0].member != None):
+                #last part bc checking king capture in check_win
+                if s2[0].member != None:
                     if ((s2[0].member.color == mycolor) and (s2[0].member.p_type != "KING")):
                         print "capture!"
 
