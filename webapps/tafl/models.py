@@ -55,6 +55,7 @@ class Game(models.Model):
             print("Invalid 2")
         return False;
 
+    #checks in each direction if the move has resulted in a pawn capture
     def check_capture(self, pos1, pos2):
         #if not a king
         if (self.squares.get(x_coord=pos1[0], y_coord=pos1[1]).member.p_type == "KING"):
@@ -87,13 +88,16 @@ class Game(models.Model):
         if (us.exists() and us2.exists()):
             self.check_capture_singledir(mycolor, us, us2)
 
+    # checks if there's something capturable and does capture if so
     def check_capture_singledir(self, mycolor, s, s2):
         if s[0].member != None:
             if ((s[0].member.color != mycolor) and (s[0].member.p_type != "KING")): 
                 #last part bc checking king capture in check_win
                 if s2[0].member != None:
                     if ((s2[0].member.color == mycolor) and (s2[0].member.p_type != "KING")):
-                        print "capture!"
+                        delS = self.squares.get(pk=s[0].pk)
+                        delS.member = None
+                        delS.save()
 
     def check_win(self, pos1, pos2):
         #if king, check his win conds, checking EDGE/CORNER

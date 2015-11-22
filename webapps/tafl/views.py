@@ -146,7 +146,7 @@ def usersearch(request):
 @login_required
 def profile(request):
     context = {}
-
+    #@TODO: 404 if no user of given name to avoid crash
     # user making the request so their profile link in navbar works
     currUser = request.user
     context['user'] = currUser
