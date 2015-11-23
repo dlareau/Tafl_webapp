@@ -70,29 +70,38 @@ class Game(models.Model):
         #get own color
         mycolor = self.squares.get(x_coord=pos1[0], y_coord=pos1[1]).member.color
 
+        #need to send back to the frontend which squares to update
+        toRemove = []
+
         #right neighbor square
         rs = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]+1)
         rs2 = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]+2)
         if (rs.exists() and rs2.exists()):
-            self.check_capture_singledir(mycolor, rs, rs2)
+            if self.check_capture_singledir(mycolor, rs, rs2):
+                toRemove.append(rs[0])
 
         #left
         ls = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]-1)
         ls2 = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]-2)
         if (ls.exists() and ls2.exists()):
-            self.check_capture_singledir(mycolor, ls, ls2)
+            if self.check_capture_singledir(mycolor, ls, ls2):
+                toRemove.append(ls[0])
 
         #down
         ds = self.squares.filter(x_coord=pos2[0]+1, y_coord=pos2[1])
         ds2 = self.squares.filter(x_coord=pos2[0]+2, y_coord=pos2[1])
         if (ds.exists() and ds2.exists()):
-            self.check_capture_singledir(mycolor, ds, ds2)
+            if self.check_capture_singledir(mycolor, ds, ds2):
+                toRemove.append(ds[0])
 
         #up
         us = self.squares.filter(x_coord=pos2[0]-1, y_coord=pos2[1])
         us2 = self.squares.filter(x_coord=pos2[0]-2, y_coord=pos2[1])
         if (us.exists() and us2.exists()):
-            self.check_capture_singledir(mycolor, us, us2)
+            if self.check_capture_singledir(mycolor, us, us2):
+                toRemove.append(us[0])
+                
+        return toRemove
 
     # checks if there's something capturable and does capture if so
     def check_capture_singledir(self, mycolor, s, s2):
@@ -104,6 +113,7 @@ class Game(models.Model):
                         delS = self.squares.get(pk=s[0].pk)
                         delS.member = None
                         delS.save()
+                        return True
 
     def check_win(self, pos1, pos2):
         sq = self.squares.filter(x_coord=pos1[0], y_coord=pos1[1])[0]

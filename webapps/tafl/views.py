@@ -74,7 +74,9 @@ def game(request):
         #send_capture(p, g.other_player(p), move[0])
 
         # Check for capture and make capture
-        g.check_capture(move[0], move[1])
+        toRemove = g.check_capture(move[0], move[1])
+        for sq in toRemove:
+            send_capture(p, g.other_player(p), [sq.x_coord, sq.y_coord])
 
         # Check for win and do win things if appropriate
         g.check_win(move[0], move[1])
