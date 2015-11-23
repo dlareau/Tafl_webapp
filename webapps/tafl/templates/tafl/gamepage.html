@@ -45,13 +45,15 @@
               <div class="tafl-piece black">
             {% elif cell.member.color == "WH" %}
               <div class="tafl-piece white">
-            {% else %}
-              <div>
             {% endif %}
             {% if cell.member.p_type == "KING" %}
               KING
             {% endif %}
-            </div>
+            {% if cell.member.color == "BL" %}
+              </div>
+            {% elif cell.member.color == "WH" %}
+              </div>
+            {% endif %}
           </div>
         {% endfor %}
       </div>
@@ -149,7 +151,7 @@
       //TODO: Neater
       msg = JSON.parse(msg)
       if(msg["capture"]){
-        console.log("Capture")
+        console.log("Capture " + msg['pos'][0] + ", " + msg['pos'][1]);
         src = $('[data-id="[' + msg['pos'][0] + ", " + msg['pos'][1] + ']"]').children(":first");
         src.detach();
       } else{
