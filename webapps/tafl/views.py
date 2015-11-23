@@ -88,7 +88,8 @@ def game(request):
             p.save()
             g.other_player(p).cur_game = None
             g.other_player(p).save()
-            #each player rank update
+            p.update_rank()
+            g.other_player(p).update_rank()
             return redirect('/tafl/')
         elif win == "B":
             g.winner = g.black_player
@@ -97,7 +98,8 @@ def game(request):
             p.save()
             g.other_player(p).cur_game = None
             g.other_player(p).save()
-            #players rank updoot
+            p.update_rank()
+            g.other_player(p).update_rank()
             return redirect('/tafl/')
 
         # Commit move to database

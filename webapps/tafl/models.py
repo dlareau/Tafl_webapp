@@ -13,6 +13,10 @@ class Player(models.Model):
     def __unicode__(self):
         return self.user.username
 
+    def update_rank(self):
+        self.rank = Game.objects.filter(winner=self).count()
+        self.save()
+
 class Game(models.Model):
     black_player = models.ForeignKey('Player', related_name='black_games', blank=True, null=True)
     white_player = models.ForeignKey('Player', related_name='white_games', blank=True, null=True)
