@@ -11,6 +11,8 @@ urlpatterns = [
     url(r'^joingame$', 'tafl.views.joingame', name='joingame'),
     url(r'^usersearch', 'tafl.views.usersearch', name='usersearch'),
     url(r'^profile', 'tafl.views.profile', name='view'),
+    url(r'^leaderboard', 'tafl.views.leaderboard', name='leaderboard'),
     url(r'^whatis$', 'tafl.views.about', name='about'),
-    url(r'^resign$', 'tafl.views.resign', name='resign')
+    url(r'^resign$', 'tafl.views.resign', name='resign'),
+    url(r'^sendMessage$', 'tafl.views.sendMessage', name='sendMessage')
 ]

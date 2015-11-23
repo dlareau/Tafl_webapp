@@ -35,7 +35,7 @@ class RegistrationForm(forms.Form):
 
         return username
 
-class PostForm(forms.ModelForm):
+class MessageForm(forms.ModelForm):
     class Meta:
         model = ChatMessage
         fields = ['text']

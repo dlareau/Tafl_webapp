@@ -39,10 +39,16 @@ class Game(models.Model):
                 square__x_coord__gt=min_x, square__x_coord__lt=max_x).exists()
         return false
 
+    def is_corner(self, pos):
+        return ((pos[0] == 0 or pos[0] == self.ruleset.size-1) and 
+                (pos[1] == 0 or pos[1] == self.ruleset.size-1))
+
+    def is_center(self, pos):
+        return (pos[0] == self.ruleset.size/2 and pos[1] == self.ruleset.size/2)
+
     # Returns true if the move is valid in the context of the current game
     def is_valid_move(self, pos1, pos2):
-        if (self.is_move_clear(pos1, pos2) and not 
-           (pos2[0] == self.ruleset.size/2 and pos2[1] == self.ruleset.size/2)):
+        if (self.is_move_clear(pos1, pos2) and not (self.is_center(pos2) or self.is_corner(pos2))):
             s1 = self.squares.get(x_coord=pos1[0], y_coord=pos1[1])
             s2 = self.squares.get(x_coord=pos2[0], y_coord=pos2[1])
             if(s1.member and not s2.member):
@@ -120,9 +126,9 @@ class Ruleset(models.Model):
         return self.name
 
 class ChatMessage(models.Model):
-    player = models.ForeignKey('Player')
+    user = models.ForeignKey(User)
     text = models.CharField(max_length=400)
     time = models.DateTimeField()
 
     def __unicode__(self):
-        return self.player.user.teamname + ": " + self.text[:20]
+        return self.user.username + ": " + self.text[:20]

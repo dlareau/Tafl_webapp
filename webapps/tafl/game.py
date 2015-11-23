@@ -4,7 +4,7 @@ import json
 
 def make_game(ruleset, black_player, white_player, waiting_player):
     g = Game(black_player=black_player, white_player=white_player, 
-            waiting_player=waiting_player, turn=False, ruleset=ruleset, 
+            waiting_player=waiting_player, turn=True, ruleset=ruleset, 
             timestamp=timezone.now())
     if black_player != None:
         g.waitingcolor="white"

@@ -61,6 +61,8 @@ hr {
     height: 90%;
     border-radius: 30px;
     margin: 4px;
+    text-align: center;
+    padding-top: 18px;
 }
 
 #chat {
