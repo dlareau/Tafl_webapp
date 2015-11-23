@@ -79,7 +79,28 @@ def game(request):
             send_capture(p, g.other_player(p), [sq.x_coord, sq.y_coord])
 
         # Check for win and do win things if appropriate
-        g.check_win(move[0], move[1])
+        win = g.check_win(move[0], move[1])
+        #@TODO: pull out into do end game func
+        if win == "W":
+            g.winner = g.white_player
+            g.save()
+            p.cur_game = None
+            p.save()
+            g.other_player(p).cur_game = None
+            g.other_player(p).save()
+            p.update_rank()
+            g.other_player(p).update_rank()
+            return redirect('/tafl/')
+        elif win == "B":
+            g.winner = g.black_player
+            g.save()
+            p.cur_game = None
+            p.save()
+            g.other_player(p).cur_game = None
+            g.other_player(p).save()
+            p.update_rank()
+            g.other_player(p).update_rank()
+            return redirect('/tafl/')
 
         # Commit move to database
         g.make_move(move[0], move[1])
