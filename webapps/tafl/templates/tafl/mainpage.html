@@ -41,16 +41,22 @@
 	      <div class="col-md-2">
 		<label>sort by:</label>
 	      </div>
+	    </div>
+	    <div class="row">
 	      <form method="GET" action="/tafl/mainpage">
-		<div class="col-md-2">
-		  <button class="btn btn-info" type="submit" name="sortby" value="time">
-		    time</button>
+		<div class="col-md-5">
+		  <div class="btn-group" role="group">
+		    <button class="btn btn-info" type="submit" name="sortby" value="timeOtN">
+		      oldest to newest</button>
+		    <button class="btn btn-info" type="submit" name="sortby" value="timeNtO">
+		      newest to oldest</button>
+		  </div>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-2">
 		  <button class="btn btn-info" type="submit" name="sortby" value="rank">
 		    player rank</button>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-2">
 		  <button class="btn btn-info" type="submit" name="sortby" value="color">
 		    open color</button>
 		</div>
