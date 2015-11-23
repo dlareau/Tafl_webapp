@@ -7,23 +7,6 @@
 {% endblock %}
     
 {% block content %}
-  <div id="myModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-        <h4 class="modal-title">Waiting on other player</h4>
-        </div>
-        <div class="modal-body">
-          <p>Please wait until another player joins your game. </p>
-          <p>In the future there will be an option to cancel this game. </p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
   <div id="labels" class="col-md-2">
     <span id="resign-btn">
       <form action="/tafl/resign" method="post" onsubmit="return confirm('Are you sure you want to resign?');">
@@ -32,13 +15,7 @@
       </form>
     </span>
     <span id="rules-btn"> 
-      <script>
-	function giveRules() {
-	    console.log("rules");
-	    alert("White - get your king to an edge square \n Black - capture the king by surrounding it on all 4 sides \n to capture a pawn - bracket on 2 sides. note, king can't capture \n all pieces move as far as is open horizontally or vertically \n can't move on corners or the throne (but can move through the throne)");
-	}
-      </script>
-      <button class="btn" onclick="giveRules()">Rules</button> 
+      <button type="button" class="btn" data-toggle="modal" data-target="#rulesModal">Rules</button>
     </span>
     {% if game.white_player == player%}
       <span id="id-you"> 
@@ -61,6 +38,43 @@
     {% endif %}
   </div>
   <div id="board-container" class="col-md-7">
+    <div id="waitingModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <div class="modal-content">
+          <div class="modal-header">
+          <h4 class="modal-title">Waiting on other player</h4>
+          </div>
+          <div class="modal-body">
+            <p>Please wait until another player joins your game. </p>
+            <p>In the future there will be an option to cancel this game. </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div id="rulesModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Quick Rules</h4>
+          </div>
+          <div class="modal-body">
+            White - get your king to an edge square.
+            <br>Black - capture the king by surrounding it on all 4 sides.
+            <br>To capture a pawn - bracket on 2 sides. Note, king can't capture.
+            <br>All pieces move as far as is open horizontally or vertically.
+            <br>You can't move onto corners or the throne (but can move through the throne).
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
     {% regroup game.squares.all by x_coord as rows %}
     {% for row in rows %}
       <div class='board-row'>
@@ -146,8 +160,7 @@
             if(html == "valid"){
               var temp = piece.detach();
               dest.append(temp);
-            }
-            else{
+            } else{
               console.log(html);
             }
           },
@@ -172,7 +185,7 @@
 
     {% if game.waiting_player %}
       jQuery(document).ready(function($) {
-        $("#myModal").modal({backdrop: "static"});
+        $("#waitingModal").modal({backdrop: "static"});
       });
     {% endif %}
 
@@ -203,7 +216,12 @@
         console.log("Capture " + msg['pos'][0] + ", " + msg['pos'][1]);
         src = $('[data-id="[' + msg['pos'][0] + ", " + msg['pos'][1] + ']"]').children(":first");
         src.detach();
-      } else{
+      } else if (msg["win"]){
+        var temp = piece.detach();
+        dest.append(temp);
+        window.location.replace("/tafl/");
+      } 
+      else{
         console.log("Moved")
         src = $('[data-id="[' + msg['move'][0][0] + ", " + msg['move'][0][1] + ']"]').children(":first");
         dst = $('[data-id="[' + msg['move'][1][0] + ", " + msg['move'][1][1] + ']"]');
@@ -219,7 +237,7 @@
 
     function receiveMessage_join(msg) {
       msg = JSON.parse(msg);
-      $("#myModal").modal("hide");
+      $("#waitingModal").modal("hide");
       $("#opponent_title").html(msg);
     }
 

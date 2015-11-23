@@ -69,8 +69,12 @@ def game(request):
         for sq in toRemove:
             send_capture(p, g.other_player(p), [sq.x_coord, sq.y_coord])
 
+
         # Check for win and do win things if appropriate
         win = g.check_win(move[0], move[1])
+
+        # Commit move to database
+        g.make_move(move[0], move[1])
         #@TODO: pull out into do end game func
         if win == "W":
             g.winner = g.white_player
@@ -81,7 +85,7 @@ def game(request):
             g.other_player(p).save()
             p.update_rank()
             g.other_player(p).update_rank()
-            return redirect('/tafl/')
+            send_win(p, g.other_player(p))
         elif win == "B":
             g.winner = g.black_player
             g.save()
@@ -91,10 +95,8 @@ def game(request):
             g.other_player(p).save()
             p.update_rank()
             g.other_player(p).update_rank()
-            return redirect('/tafl/')
+            send_win(p, g.other_player(p))
 
-        # Commit move to database
-        g.make_move(move[0], move[1])
         return HttpResponse("valid")
 
     if(p.cur_game == None):
@@ -207,8 +209,8 @@ def leaderboard(request):
         player_dict['rank'] = p.rank
         player_dict['whwin'] = Game.objects.filter(white_player=p, winner=p).count()
         player_dict['blwin'] = Game.objects.filter(black_player=p, winner=p).count()
-        player_dict['whgames'] = Game.objects.filter(white_player=p).count()
-        player_dict['blgames'] = Game.objects.filter(black_player=p).count()
+        player_dict['whgames'] = Game.objects.filter(white_player=p, waiting_player=None).count()
+        player_dict['blgames'] = Game.objects.filter(black_player=p, waiting_player=None).count()
         context['players'].append(player_dict)
     return render(request, "tafl/leaderboard.html", context)
 
