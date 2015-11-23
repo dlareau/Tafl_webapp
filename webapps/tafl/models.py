@@ -130,7 +130,6 @@ class Game(models.Model):
             kingN = None
             for n in neighbors:
                 if (n.exists()):
-                    print n[0]
                     if (n[0].member != None):
                         if (n[0].member.p_type == "KING"):
                             kingN = n[0]
@@ -147,8 +146,6 @@ class Game(models.Model):
                 if nCount == 4:
                     return "B"
                     #do end gamey things
-                else:
-                    print nCount
         return "N"
 
     #returns an array of the four neighboring squares of the given pos
