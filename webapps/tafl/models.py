@@ -121,13 +121,44 @@ class Game(models.Model):
             if (self.ruleset.win_cond == "EDGE"):
                 if (pos2[0] == 0 or pos2[0] == (self.ruleset.size-1)
                     or pos2[1] == 0 or pos2[1] == (self.ruleset.size-1)):
-                    print "white wins!"
+                    return "W"
+                    # do end gamey things
             #elif (self.ruleset.win_cond == "CORNER"):
             #@TODO implement when we add something besides Tablut
-        #elif (sq.member.color == "BL"):
-            #n1 = self.squares.filter
-        
-        return False
+        elif (sq.member.color == "BL"): #@TODO clean up probably
+            neighbors = self.getNeighbors(pos2)
+            kingN = None
+            for n in neighbors:
+                if (n.exists()):
+                    print n[0]
+                    if (n[0].member != None):
+                        if (n[0].member.p_type == "KING"):
+                            kingN = n[0]
+                            break
+            
+            if kingN != None: #actually neighboring the king
+                #check if king surrounded by black
+                kNeighbors = self.getNeighbors([kingN.x_coord, kingN.y_coord])
+                nCount = 1 #@TODO this is bc the board hasn't been updated yet when this
+                             # this is called, this is hacky bs fix later
+                for kN in kNeighbors:
+                    if kN.exists() and kN[0].member != None and kN[0].member.color == "BL":
+                        nCount += 1
+                if nCount == 4:
+                    return "B"
+                    #do end gamey things
+                else:
+                    print nCount
+        return "N"
+
+    #returns an array of the four neighboring squares of the given pos
+    def getNeighbors(self, pos):
+        neighbors = []
+        neighbors.append(self.squares.filter(x_coord=pos[0], y_coord=pos[1]-1))
+        neighbors.append(self.squares.filter(x_coord=pos[0], y_coord=pos[1]+1))
+        neighbors.append(self.squares.filter(x_coord=pos[0]-1, y_coord=pos[1]))
+        neighbors.append(self.squares.filter(x_coord=pos[0]+1, y_coord=pos[1]))
+        return neighbors
 
     # Moves the piece in pos1 to pos2
     def make_move(self, pos1, pos2):  
