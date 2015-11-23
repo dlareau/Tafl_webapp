@@ -30,3 +30,10 @@ def send_message(player1, player2, msg):
     message['time'] = str(msg.time)
     message = RedisMessage(json.dumps(message))
     redis_publisher.publish_message(message)
+
+def send_join(player, new_player):
+    redis_publisher = RedisPublisher(facility='game_join',
+             users=[player.user.username])
+    message = new_player.user.username
+    message = RedisMessage(json.dumps(message))
+    redis_publisher.publish_message(message)

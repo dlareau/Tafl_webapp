@@ -7,6 +7,23 @@
 {% endblock %}
     
 {% block content %}
+  <div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+        <h4 class="modal-title">Waiting on other player</h4>
+        </div>
+        <div class="modal-body">
+          <p>Please wait until another player joins your game. </p>
+          <p>In the future there will be an option to cancel this game. </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <div id="labels" class="col-md-2">
     <span id="resign-btn">
       <form action="/tafl/resign" method="post" onsubmit="return confirm('Are you sure you want to resign?');">
@@ -30,7 +47,7 @@
       </span>
       <span id="id-opp">
         <h3>Opponent:</h3>
-        <h3>{{game.black_player.user.username}}</h3>
+        <h3 id="opponent_title">{{game.black_player.user.username}}</h3>
       </span>
     {% else %}
       <span id="id-you">
@@ -153,6 +170,12 @@
 
     //=========  WEBSOCKETS \/ ================
 
+    {% if game.waiting_player %}
+      jQuery(document).ready(function($) {
+        $("#myModal").modal({backdrop: "static"});
+      });
+    {% endif %}
+
     jQuery(document).ready(function($) {
       var ws4redis = WS4Redis({
         uri: '{{ WEBSOCKET_URI }}game_move?subscribe-user',
@@ -163,6 +186,12 @@
       var ws4redis2 = WS4Redis({
         uri: '{{ WEBSOCKET_URI }}chat?subscribe-user',
         receive_message: receiveMessage_chat,
+        heartbeat_msg: {{ WS4REDIS_HEARTBEAT }}
+      });
+
+      var ws4redis3 = WS4Redis({
+        uri: '{{ WEBSOCKET_URI }}game_join?subscribe-user',
+        receive_message: receiveMessage_join,
         heartbeat_msg: {{ WS4REDIS_HEARTBEAT }}
       });
     });
@@ -184,10 +213,14 @@
     }
 
     function receiveMessage_chat(msg) {
-      //TODO: Neater
       msg = JSON.parse(msg);
       $("#chat_messages").append(msg['name'] + ": " + msg['text'] + "<br>")
-      console.log(msg);
+    }
+
+    function receiveMessage_join(msg) {
+      msg = JSON.parse(msg);
+      $("#myModal").modal("hide");
+      $("#opponent_title").html(msg);
     }
 
     $(window).resize(function() {

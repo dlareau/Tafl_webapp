@@ -155,6 +155,7 @@ def joingame(request):
             g.white_player = g.waiting_player
             g.black_player = player
 
+    send_join(g.waiting_player, player)
     g.waiting_player = None #cleanup
     player.cur_game = g
 
