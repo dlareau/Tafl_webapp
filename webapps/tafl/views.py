@@ -273,7 +273,9 @@ def resign(request):
 def sendMessage(request):
     form = MessageForm(request.POST)
     if form.is_valid():
-        ChatMessage.objects.create(text=form.cleaned_data['text'],
+        msg = ChatMessage.objects.create(text=form.cleaned_data['text'],
                             user=request.user, time=timezone.now())
+        p = Player.objects.get(user=request.user)
+        send_message(p, p.cur_game.other_player(p), msg)
         return HttpResponse("valid")
     return HttpResponse("invalid")

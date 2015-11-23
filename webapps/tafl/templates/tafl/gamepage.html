@@ -62,6 +62,8 @@
   <div id="chat" class="col-md-3">
     <h2>Chat</h2>
     <hr>
+    <div id="chat_messages" style="word-wrap: break-word;">
+    </div>
     <form id="chatForm" class="form" action="{% url 'sendMessage' %}" method="post">
       {% csrf_token %}
       <input type="text" id="inputUserPost" name="text" class="form-control" 
@@ -89,6 +91,12 @@
       return "";
     }
 
+    $(function () {
+      $.ajaxSetup({
+        headers: { "X-CSRFToken": getCookie("csrftoken") }
+      });
+    });
+
     $('#chatForm').on('submit', function (e) {
       e.preventDefault();
       $.ajax({
@@ -98,12 +106,6 @@
         error: function (html) {
           console.log(html);
         }
-      });
-    });
-
-    $(function () {
-      $.ajaxSetup({
-        headers: { "X-CSRFToken": getCookie("csrftoken") }
       });
     });
 
@@ -139,15 +141,25 @@
 
     });
 
+    //========= FORMS/MOVES /\ ================
+
+    //=========  WEBSOCKETS \/ ================
+
     jQuery(document).ready(function($) {
       var ws4redis = WS4Redis({
         uri: '{{ WEBSOCKET_URI }}game_move?subscribe-user',
-        receive_message: receiveMessage,
+        receive_message: receiveMessage_move,
+        heartbeat_msg: {{ WS4REDIS_HEARTBEAT }}
+      });
+
+      var ws4redis2 = WS4Redis({
+        uri: '{{ WEBSOCKET_URI }}chat?subscribe-user',
+        receive_message: receiveMessage_chat,
         heartbeat_msg: {{ WS4REDIS_HEARTBEAT }}
       });
     });
 
-    function receiveMessage(msg) {
+    function receiveMessage_move(msg) {
       //TODO: Neater
       msg = JSON.parse(msg)
       if(msg["capture"]){
@@ -161,6 +173,13 @@
         var temp = src.detach();
         dst.append(temp);
       }
+    }
+
+    function receiveMessage_chat(msg) {
+      //TODO: Neater
+      msg = JSON.parse(msg);
+      $("#chat_messages").append(msg['name'] + ": " + msg['text'] + "<br>")
+      console.log(msg);
     }
 
     $(window).resize(function() {
