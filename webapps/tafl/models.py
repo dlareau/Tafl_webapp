@@ -109,12 +109,7 @@ class Game(models.Model):
             #elif (self.ruleset.win_cond == "CORNER"):
             #@TODO implement when we add something besides Tablut
         #elif (sq.member.color == "BL"):
-            
-
-
-        #if king, check his win conds, checking EDGE/CORNER
-
-        #if black, check king capture
+            #n1 = self.squares.filter
         
         return False
 
