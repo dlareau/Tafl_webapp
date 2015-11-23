@@ -29,3 +29,19 @@ body {
 .form-control {
     margin-bottom: 10px;
 }
+
+.leaderboard_col {
+    margin: 5px;
+    width: 32%;
+    float: left;
+}
+
+.leaderboard_title {
+    text-align: center;
+}
+
+.leaderboard_stats {
+    height: 400px;
+    background-color: ghostwhite;
+    border: 1px solid black;
+}

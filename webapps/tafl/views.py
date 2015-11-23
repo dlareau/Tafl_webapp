@@ -69,8 +69,9 @@ def game(request):
             return HttpResponse("invalid 1")
 
         # Move was valid, check for other player and send the move update
-        if(g.other_player(p) != None):
-            send_move_update(g.other_player(p), move)
+        if(g.other_player(p) != None):\
+            send_move_update(g.other_player(p), move)\
+        #send_capture(p, g.other_player(p), move[0])
 
         # Check for capture and make capture
         g.check_capture(move[0], move[1])
@@ -181,6 +182,10 @@ def profile(request):
 def about(request):
     return render(request, "tafl/about.html")
 
+@login_required
+def leaderboard(request):
+    return render(request, "tafl/leaderboard.html")
+
 def mylogin(request):
     context = {}
     if request.method == "GET":
@@ -250,3 +255,12 @@ def resign(request):
     p.cur_game = None
     p.save()
     return redirect('/tafl/') 
+
+@login_required
+def sendMessage(request):
+    form = MessageForm(request.POST)
+    if form.is_valid():
+        ChatMessage.objects.create(text=form.cleaned_data['text'],
+                            user=request.user, time=timezone.now())
+        return HttpResponse("valid")
+    return HttpResponse("invalid")
