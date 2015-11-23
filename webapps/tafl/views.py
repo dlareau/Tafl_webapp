@@ -71,7 +71,7 @@ def game(request):
         # Move was valid, check for other player and send the move update
         if(g.other_player(p) != None):\
             send_move_update(g.other_player(p), move)\
-            send_capture(p, g.other_player(p), move[0])
+        #send_capture(p, g.other_player(p), move[0])
 
         # Check for capture and make capture
         # Check for win and do win things if appropriate
