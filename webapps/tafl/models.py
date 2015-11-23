@@ -65,7 +65,7 @@ class Game(models.Model):
     def check_capture(self, pos1, pos2):
         #if not a king
         if (self.squares.get(x_coord=pos1[0], y_coord=pos1[1]).member.p_type == "KING"):
-            return False #king can't capture
+            return [] #king can't capture
 
         #get own color
         mycolor = self.squares.get(x_coord=pos1[0], y_coord=pos1[1]).member.color
