@@ -77,23 +77,23 @@ def game(request):
         #@TODO: pull out into do end game func
         if win == "W":
             g.winner = g.white_player
+            g.update_ranks()
             g.save()
+            p = Player.objects.get(user=request.user) # Needed for TOCTOU bug
             p.cur_game = None
             p.save()
             g.other_player(p).cur_game = None
             g.other_player(p).save()
-            p.update_rank()
-            g.other_player(p).update_rank()
             send_win(p, g.other_player(p))
         elif win == "B":
             g.winner = g.black_player
+            g.update_ranks()
             g.save()
+            p = Player.objects.get(user=request.user) # Needed for TOCTOU bug
             p.cur_game = None
             p.save()
             g.other_player(p).cur_game = None
             g.other_player(p).save()
-            p.update_rank()
-            g.other_player(p).update_rank()
             send_win(p, g.other_player(p))
 
         return HttpResponse("valid")

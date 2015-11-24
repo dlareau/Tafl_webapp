@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
+from math import exp
 
 now = timezone.now()
 
@@ -13,9 +14,13 @@ class Player(models.Model):
     def __unicode__(self):
         return self.user.username
 
-    def update_rank(self):
-        self.rank = Game.objects.filter(winner=self).count()
+    def update_rank(self, new_rank):
+        self.rank = new_rank
         self.save()
+
+    def num_games(self):
+        return (Game.objects.filter(black_player=self).count() + 
+                Game.objects.filter(white_player=self).count())
 
 class Game(models.Model):
     black_player = models.ForeignKey('Player', related_name='black_games', blank=True, null=True)
@@ -43,6 +48,24 @@ class Game(models.Model):
             return self.white_player
         else:
             return None
+
+    def update_ranks(self):
+        if(self.winner == None):
+            return
+        point_diff = self.black_player.rank - self.white_player.rank
+
+        wg_factor = y=20.0*exp(-0.05 * self.white_player.num_games())+10
+        white_win = 1.0 if self.white_player == self.winner else 0.0
+        e_white = (1.0 / (1.0 + pow(10, (point_diff / 400)))) 
+        white_new = (self.white_player.rank + wg_factor * (white_win - e_white))
+        self.white_player.update_rank(white_new)
+
+        bg_factor = y=20.0*exp(-0.05 * self.black_player.num_games())+10
+        black_win = 1.0 - white_win
+        e_black = 1.0 - e_white
+        black_new = (self.black_player.rank + bg_factor * (black_win - e_black))
+        self.black_player.update_rank(black_new)
+        
     #============ End Player related game functions =============
 
     #============== Square related game functions ===============
