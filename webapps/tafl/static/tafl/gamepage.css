@@ -71,6 +71,7 @@ hr {
     margin: 4px;
     text-align: center;
     padding-top: 18px;
+    box-shadow: 2px 3px 10px;
 }
 
 #chat {

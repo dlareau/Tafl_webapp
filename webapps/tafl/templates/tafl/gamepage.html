@@ -38,9 +38,9 @@
     {% endif %}
   </div>
   <div id="board-container" class="col-md-7">
+    <!-- Bootstrap modals. They are just fancy popups. -->
     <div id="waitingModal" class="modal fade" role="dialog">
       <div class="modal-dialog">
-
         <div class="modal-content">
           <div class="modal-header">
           <h4 class="modal-title">Waiting on other player</h4>
@@ -50,31 +50,34 @@
             <p>In the future there will be an option to cancel this game. </p>
           </div>
         </div>
-
       </div>
     </div>
+
+    <!-- Rules modal -->
     <div id="rulesModal" class="modal fade" role="dialog">
       <div class="modal-dialog">
-
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
             <h4 class="modal-title">Quick Rules</h4>
           </div>
           <div class="modal-body">
+            <!-- This is the rules dialog, only modify the text in here -->
             White - get your king to an edge square.
             <br>Black - capture the king by surrounding it on all 4 sides.
             <br>To capture a pawn - bracket on 2 sides. Note, king can't capture.
             <br>All pieces move as far as is open horizontally or vertically.
             <br>You can't move onto corners or the throne (but can move through the throne).
+            <!-- end of rules dialog -->
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
         </div>
-
       </div>
     </div>
+    <!-- End of modals -->
+
     {% regroup game.squares.all by x_coord as rows %}
     {% for row in rows %}
       <div class='board-row'>
