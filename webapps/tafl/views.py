@@ -64,7 +64,6 @@ def game(request):
             send_move_update(g.other_player(p), move)\
         #send_capture(p, g.other_player(p), move[0])
 
-
         # Commit move to database
         g.make_move(move[0], move[1])
 
@@ -100,8 +99,9 @@ def game(request):
         return HttpResponse("valid")
 
     if(p.cur_game == None):
-        return redirect('/tafl/') 
-    context = {'game':p.cur_game, 'player': p}
+        return redirect('/tafl/')
+    messages = ChatMessage.objects.filter(game = p.cur_game)
+    context = {'game':p.cur_game, 'player': p, 'messages': messages}
     return render(request, "tafl/gamepage.html", context)
 
 @login_required
@@ -285,12 +285,14 @@ def resign(request):
     return redirect('/tafl/') 
 
 @login_required
+@transaction.atomic
 def sendMessage(request):
     form = MessageForm(request.POST)
     if form.is_valid():
-        msg = ChatMessage.objects.create(text=form.cleaned_data['text'],
-                            user=request.user, time=timezone.now())
         p = Player.objects.get(user=request.user)
+        msg = ChatMessage.objects.create(text=form.cleaned_data['text'],
+                            user=request.user, time=timezone.now(), 
+                            game=p.cur_game)
         send_message(p, p.cur_game.other_player(p), msg)
         return HttpResponse("valid")
     return HttpResponse("invalid")

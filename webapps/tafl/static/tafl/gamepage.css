@@ -90,3 +90,9 @@ hr {
 #ChatPostButton {
     float:right;
 }
+
+#chat_messages {
+    word-wrap: break-word;
+    height: 70%;
+    overflow: scroll;
+}

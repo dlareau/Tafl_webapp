@@ -239,6 +239,7 @@ class ChatMessage(models.Model):
     user = models.ForeignKey(User)
     text = models.CharField(max_length=400)
     time = models.DateTimeField()
+    game = models.ForeignKey(Game)
 
     def __unicode__(self):
         return self.user.username + ": " + self.text[:20]
