@@ -76,7 +76,7 @@ class Game(models.Model):
             min_x = min(pos1[0], pos2[0])
             return not self.pieces.filter(square__y_coord=pos1[1], 
                 square__x_coord__gt=min_x, square__x_coord__lt=max_x).exists()
-        return false
+        return False
 
     # Returns true if the move is valid in the context of the current game
     def is_valid_move(self, pos1, pos2):
@@ -162,7 +162,7 @@ class Game(models.Model):
         if nCount == 4:
             return "B"
             #do end gamey things
-            
+
         return "N"
 
     # Moves the piece in pos1 to pos2

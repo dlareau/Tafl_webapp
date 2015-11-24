@@ -43,7 +43,7 @@ $('.board-cell').click(function(event) {
       url: "{% url 'game' %}",
       data: {move: "[" + piece.parent().attr('data-id') + ", " + $(this).attr('data-id') + "]"},
       success: function (html) {
-        console.log(piece.parent().attr('data-id') + " => " + dest.attr('data-id'));
+        //console.log(piece.parent().attr('data-id') + " => " + dest.attr('data-id'));
         if(html == "valid"){
           var temp = piece.detach();
           dest.append(temp);
@@ -55,15 +55,25 @@ $('.board-cell').click(function(event) {
         console.log(html);
       }
     });
+    piece.parent().css('background-color', '');
     clicked = false;
   }
 });
 
 $('.tafl-piece').click(function(event) {
-  event.stopPropagation();
-  clicked = true;
-  piece = $(this);
-
+  {% if game.white_player == player%}
+    var color = "white"
+  {% else %}
+    var color = "black"
+  {% endif %}
+  if($(this).hasClass(color)){
+    event.stopPropagation();
+    clicked = true;
+    if(piece != null)
+      piece.parent().css('background-color', '');
+    piece = $(this);
+    piece.parent().css('background-color', 'red');
+  }
 });
 
 //========= FORMS/MOVES /\ ================

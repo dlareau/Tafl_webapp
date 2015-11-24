@@ -19,21 +19,21 @@
     </span>
     {% if game.white_player == player%}
       <span id="id-you"> 
-        <h3 class="whitetxt">You:</h3>
-        <h3 class="whitetxt">{{game.white_player.user.username}}</h3> 
+        <h3>You:<br>(White)</h3>
+        <h3>{{game.white_player.user.username}}</h3> 
       </span>
       <span id="id-opp">
-        <h3 class="blacktxt">Opponent:</h3>
-        <h3 class="blacktxt" id="opponent_title">{{game.black_player.user.username}}</h3>
+        <h3>Opponent: <br>(Black)</h3>
+        <h3 id="opponent_title">{{game.black_player.user.username}}</h3>
       </span>
     {% else %}
       <span id="id-you">
-        <h3 class="blacktxt">You:</h3>
-        <h3 class="blacktxt">{{game.black_player.user.username}}</h3>
+        <h3>You: <br>(Black)</h3>
+        <h3>{{game.black_player.user.username}}</h3>
       </span>
       <span id="id-opp">
-        <h3 class="whitetxt">Opponent:</h3>
-        <h3 class="whitetxt">{{game.white_player.user.username}}</h3>
+        <h3>Opponent: <br>(White)</h3>
+        <h3>{{game.white_player.user.username}}</h3>
       </span>
     {% endif %}
   </div>
