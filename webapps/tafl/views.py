@@ -64,17 +64,17 @@ def game(request):
             send_move_update(g.other_player(p), move)\
         #send_capture(p, g.other_player(p), move[0])
 
+
+        # Commit move to database
+        g.make_move(move[0], move[1])
+
         # Check for capture and make capture
         toRemove = g.check_capture(move[0], move[1])
         for sq in toRemove:
             send_capture(p, g.other_player(p), [sq.x_coord, sq.y_coord])
 
-
         # Check for win and do win things if appropriate
-        win = g.check_win(move[0], move[1])
-
-        # Commit move to database
-        g.make_move(move[0], move[1])
+        win = g.check_win()
         #@TODO: pull out into do end game func
         if win == "W":
             g.winner = g.white_player

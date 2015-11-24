@@ -30,6 +30,40 @@ class Game(models.Model):
     winner = models.ForeignKey('Player', related_name='won_games', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    #============== Player related game functions ===============
+    def players(self):
+        return [self.black_player, self.white_player]
+
+    # Given one player in the game, it will return the other player or 
+    # None if there is no other player.
+    def other_player(self, player):
+        if(self.white_player == player):
+            return self.black_player
+        elif(self.black_player == player):
+            return self.white_player
+        else:
+            return None
+    #============ End Player related game functions =============
+
+    #============== Square related game functions ===============
+    def get_square(self, pos):
+        try:
+            val = self.squares.get(x_coord=pos[0], y_coord=pos[1])
+        except:
+            val = None
+        return val
+
+    #returns an array of the four neighboring squares of the given pos
+    def getNeighbors(self, pos):
+        neighbors = []
+        neighbors.append(self.squares.filter(x_coord=pos[0], y_coord=pos[1]-1))
+        neighbors.append(self.squares.filter(x_coord=pos[0], y_coord=pos[1]+1))
+        neighbors.append(self.squares.filter(x_coord=pos[0]-1, y_coord=pos[1]))
+        neighbors.append(self.squares.filter(x_coord=pos[0]+1, y_coord=pos[1]))
+        return neighbors
+    #============ End Square related game functions =============
+
+    #=========== Move/Capture related game functions ============
     # Returns true if there are no pieces between pos1 and pos2 (exclusive)
     def is_move_clear(self, pos1, pos2):
         if(pos1[0] == pos2[0]):
@@ -44,18 +78,13 @@ class Game(models.Model):
                 square__x_coord__gt=min_x, square__x_coord__lt=max_x).exists()
         return false
 
-    def is_corner(self, pos):
-        return ((pos[0] == 0 or pos[0] == self.ruleset.size-1) and 
-                (pos[1] == 0 or pos[1] == self.ruleset.size-1))
-
-    def is_center(self, pos):
-        return (pos[0] == self.ruleset.size/2 and pos[1] == self.ruleset.size/2)
-
     # Returns true if the move is valid in the context of the current game
     def is_valid_move(self, pos1, pos2):
-        if (self.is_move_clear(pos1, pos2) and not (self.is_center(pos2) or self.is_corner(pos2))):
-            s1 = self.squares.get(x_coord=pos1[0], y_coord=pos1[1])
-            s2 = self.squares.get(x_coord=pos2[0], y_coord=pos2[1])
+        if((not self.ruleset.valid_pos(pos1)) or (not self.ruleset.valid_pos(pos2))):
+            return False
+        if (self.is_move_clear(pos1, pos2) and not (self.ruleset.is_center(pos2) or self.ruleset.is_corner(pos2))):
+            s1 = self.get_square(pos1)
+            s2 = self.get_square(pos2)
             if(s1.member and not s2.member):
                 if((s1.member.color == "BL" and not self.turn) or (s1.member.color == "WH" and self.turn)):
                     return True;
@@ -65,106 +94,81 @@ class Game(models.Model):
             print("Invalid 2")
         return False;
 
-    #checks in each direction if the move has resulted in a pawn capture
+    # checks in each direction if the move has resulted in a pawn capture
     def check_capture(self, pos1, pos2):
         #if not a king
-        if (self.squares.get(x_coord=pos1[0], y_coord=pos1[1]).member.p_type == "KING"):
+        if (self.get_square(pos2).member.p_type == "KING"):
             return [] #king can't capture
-
-        #get own color
-        mycolor = self.squares.get(x_coord=pos1[0], y_coord=pos1[1]).member.color
 
         #need to send back to the frontend which squares to update
         toRemove = []
 
-        #right neighbor square
-        rs = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]+1)
-        rs2 = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]+2)
-        if (rs.exists() and rs2.exists()):
-            if self.check_capture_singledir(mycolor, rs, rs2):
-                toRemove.append(rs[0])
-
-        #left
-        ls = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]-1)
-        ls2 = self.squares.filter(x_coord=pos2[0], y_coord=pos2[1]-2)
-        if (ls.exists() and ls2.exists()):
-            if self.check_capture_singledir(mycolor, ls, ls2):
-                toRemove.append(ls[0])
-
-        #down
-        ds = self.squares.filter(x_coord=pos2[0]+1, y_coord=pos2[1])
-        ds2 = self.squares.filter(x_coord=pos2[0]+2, y_coord=pos2[1])
-        if (ds.exists() and ds2.exists()):
-            if self.check_capture_singledir(mycolor, ds, ds2):
-                toRemove.append(ds[0])
-
-        #up
-        us = self.squares.filter(x_coord=pos2[0]-1, y_coord=pos2[1])
-        us2 = self.squares.filter(x_coord=pos2[0]-2, y_coord=pos2[1])
-        if (us.exists() and us2.exists()):
-            if self.check_capture_singledir(mycolor, us, us2):
-                toRemove.append(us[0])
+        up = self.check_capture_offset(pos2, (0,1))
+        if(up): toRemove.append(up)
+        down = self.check_capture_offset(pos2, (0,-1))
+        if(down): toRemove.append(down)
+        left = self.check_capture_offset(pos2, (-1,0))
+        if(left): toRemove.append(left)
+        right = self.check_capture_offset(pos2, (1,0))
+        if(right): toRemove.append(right)
                 
         return toRemove
 
-    # checks if there's something capturable and does capture if so
-    def check_capture_singledir(self, mycolor, s, s2):
-        if s[0].member != None:
-            if ((s[0].member.color != mycolor) and (s[0].member.p_type != "KING")): 
-                #last part bc checking king capture in check_win
-                if s2[0].member != None:
-                    if ((s2[0].member.color == mycolor) and (s2[0].member.p_type != "KING")):
-                        delS = self.squares.get(pk=s[0].pk)
-                        delS.member = None
-                        delS.save()
-                        return True
+    # Will check for a capture in a direction specified by and ofset. 
+    def check_capture_offset(self, pos, offset):
+        pos1 = self.get_square(pos)
+        pos2 = self.get_square((pos[0]+offset[0], pos[1]+offset[1]))
+        pos3 = self.get_square((pos[0]+2*offset[0], pos[1]+2*offset[1]))
 
-    def check_win(self, pos1, pos2):
-        sq = self.squares.filter(x_coord=pos1[0], y_coord=pos1[1])[0]
-        if (sq.member.color == "WH" and sq.member.p_type == "KING"):
-            if (self.ruleset.win_cond == "EDGE"):
-                if (pos2[0] == 0 or pos2[0] == (self.ruleset.size-1)
-                    or pos2[1] == 0 or pos2[1] == (self.ruleset.size-1)):
-                    return "W"
-                    # do end gamey things
-            #elif (self.ruleset.win_cond == "CORNER"):
-            #@TODO implement when we add something besides Tablut
-        elif (sq.member.color == "BL"): #@TODO clean up probably
-            neighbors = self.getNeighbors(pos2)
-            kingN = None
-            for n in neighbors:
-                if (n.exists()):
-                    if (n[0].member != None):
-                        if (n[0].member.p_type == "KING"):
-                            kingN = n[0]
-                            break
+        if((pos1 == None) or (pos1.member == None) or 
+           (pos2 == None) or (pos2.member == None) or
+           (pos3 == None) or (pos3.member == None)):
+            return None
+
+        mycolor = pos1.member.color
+
+        if((pos1.member.p_type == "KING") or 
+           (pos2.member.p_type == "KING") or 
+           (pos3.member.p_type == "KING")):
+            return None
+
+        if((pos1.member.color != mycolor) or
+           (pos2.member.color == mycolor) or
+           (pos3.member.color != mycolor)):
+            return None
+
+        delS = self.squares.get(pk=pos2.pk)
+        delS.member = None
+        delS.save()
+        return pos2
+
+    def check_win(self):
+        sq = self.squares.get(member__p_type = "KING")
+        pos = (sq.x_coord, sq.y_coord)
+
+        if (self.ruleset.win_cond == "EDGE" and self.ruleset.is_edge(pos)):
+            return "W"
+                # do end gamey things
+        elif (self.ruleset.win_cond == "CORNER" and self.ruleset.is_corner(pos)):
+            return "W"
+                # do end gamey things
+
+        #check if king surrounded by black
+        kNeighbors = self.getNeighbors(pos)
+        nCount = 0
+        for kN in kNeighbors:
+            if kN.exists() and kN[0].member != None and kN[0].member.color == "BL":
+                nCount += 1
+        if nCount == 4:
+            return "B"
+            #do end gamey things
             
-            if kingN != None: #actually neighboring the king
-                #check if king surrounded by black
-                kNeighbors = self.getNeighbors([kingN.x_coord, kingN.y_coord])
-                nCount = 1 #@TODO this is bc the board hasn't been updated yet when this
-                             # this is called, this is hacky bs fix later
-                for kN in kNeighbors:
-                    if kN.exists() and kN[0].member != None and kN[0].member.color == "BL":
-                        nCount += 1
-                if nCount == 4:
-                    return "B"
-                    #do end gamey things
         return "N"
-
-    #returns an array of the four neighboring squares of the given pos
-    def getNeighbors(self, pos):
-        neighbors = []
-        neighbors.append(self.squares.filter(x_coord=pos[0], y_coord=pos[1]-1))
-        neighbors.append(self.squares.filter(x_coord=pos[0], y_coord=pos[1]+1))
-        neighbors.append(self.squares.filter(x_coord=pos[0]-1, y_coord=pos[1]))
-        neighbors.append(self.squares.filter(x_coord=pos[0]+1, y_coord=pos[1]))
-        return neighbors
 
     # Moves the piece in pos1 to pos2
     def make_move(self, pos1, pos2):  
-        s1 = self.squares.get(x_coord=pos1[0], y_coord=pos1[1])
-        s2 = self.squares.get(x_coord=pos2[0], y_coord=pos2[1])
+        s1 = self.get_square(pos1)
+        s2 = self.get_square(pos2)
         s2.member = s1.member;
         s1.member = None;
         self.turn = not self.turn
@@ -172,18 +176,7 @@ class Game(models.Model):
         s1.save()
         s2.save()
 
-    def players(self):
-        return [self.black_player, self.white_player]
-
-    # Given one player in the game, it will return the other player or 
-    # None if there is no other player.
-    def other_player(self, player):
-        if(self.white_player == player):
-            return self.black_player
-        elif(self.black_player == player):
-            return self.white_player
-        else:
-            return None
+    #========= End Move/Capture related game functions ==========
 
     def __unicode__(self):
         return str(self.timestamp)
@@ -225,6 +218,22 @@ class Ruleset(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def is_corner(self, pos):
+        return ((pos[0] == 0 or pos[0] == self.size-1) and 
+                (pos[1] == 0 or pos[1] == self.size-1))
+
+    def is_edge(self, pos):
+        return ((pos[0] == 0 or pos[0] == self.size-1) or 
+                (pos[1] == 0 or pos[1] == self.size-1))
+
+    def valid_pos(self, pos):
+        row_valid = (0 <= pos[0] and pos[0] < self.size)
+        col_valid = (0 <= pos[1] and pos[1] < self.size)
+        return row_valid and col_valid
+
+    def is_center(self, pos):
+        return (pos[0] == self.size/2 and pos[1] == self.size/2)
 
 class ChatMessage(models.Model):
     user = models.ForeignKey(User)
