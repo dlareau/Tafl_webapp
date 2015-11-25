@@ -60,41 +60,21 @@ def game(request):
             return HttpResponse("invalid 1")
 
         # Move was valid, check for other player and send the move update
-        if(g.other_player(p) != None):\
-            send_move_update(g.other_player(p), move)\
-        #send_capture(p, g.other_player(p), move[0])
+        if(g.other_player(p) != None):
+            send_move_update(g.other_player(p), move)
 
         # Commit move to database
         g.make_move(move[0], move[1])
 
         # Check for capture and make capture
-        toRemove = g.check_capture(move[0], move[1])
+        toRemove = g.check_capture(move[1])
         for sq in toRemove:
             send_capture(p, g.other_player(p), [sq.x_coord, sq.y_coord])
 
         # Check for win and do win things if appropriate
-        win = g.check_win()
-        #@TODO: pull out into do end game func
-        if win == "W":
-            g.winner = g.white_player
-            g.update_ranks()
-            g.save()
-            p = Player.objects.get(user=request.user) # Needed for TOCTOU bug
-            p.cur_game = None
-            p.save()
-            g.other_player(p).cur_game = None
-            g.other_player(p).save()
-            send_win(p, g.other_player(p))
-        elif win == "B":
-            g.winner = g.black_player
-            g.update_ranks()
-            g.save()
-            p = Player.objects.get(user=request.user) # Needed for TOCTOU bug
-            p.cur_game = None
-            p.save()
-            g.other_player(p).cur_game = None
-            g.other_player(p).save()
-            send_win(p, g.other_player(p))
+        winner = g.check_win()
+        if(winner != None):
+            g.end_game(winner)
 
         return HttpResponse("valid")
 
@@ -261,7 +241,7 @@ def register(request):
     newUser.save()
 
     #create player
-    newPlayer = Player(user=newUser, cur_game=None)
+    newPlayer = Player(user=newUser, cur_game=None, rank=400)
     newPlayer.save()
     
     #log them in
@@ -274,14 +254,7 @@ def register(request):
 @transaction.atomic
 def resign(request):
     p = Player.objects.get(user=request.user)
-    p2 = p.cur_game.other_player(p)
-    if(p2 != None):
-        p.cur_game.winner = p2
-        p.cur_game.save()
-        p2.cur_game = None
-        p2.save()
-    p.cur_game = None
-    p.save()
+    p.cur_game.end_game(p.cur_game.other_player(p))
     return redirect('/tafl/') 
 
 @login_required
