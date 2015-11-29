@@ -33,6 +33,7 @@ $('#chatForm').on('submit', function (e) {
       console.log(html);
     }
   });
+  $("#inputUserPost").val("");
 });
 
 $('.board-cell').click(function(event) {
@@ -87,6 +88,11 @@ $('.tafl-piece').click(function(event) {
 {% endif %}
 
 jQuery(document).ready(function($) {
+  size = ($("#board-container").width()-36)/9
+  $(".board-cell").width(size);
+  $(".board-cell").height(size);
+  var elem = document.getElementById('chat_messages');
+  elem.scrollTop = elem.scrollHeight;
   var ws4redis = WS4Redis({
     uri: '{{ WEBSOCKET_URI }}game_move?subscribe-user',
     receive_message: receiveMessage_move,
@@ -114,8 +120,6 @@ function receiveMessage_move(msg) {
     src = $('[data-id="[' + msg['pos'][0] + ", " + msg['pos'][1] + ']"]').children(":first");
     src.detach();
   } else if (msg["win"]){
-    var temp = piece.detach();
-    dest.append(temp);
     window.location.replace("/tafl/");
   } 
   else{
@@ -130,6 +134,8 @@ function receiveMessage_move(msg) {
 function receiveMessage_chat(msg) {
   msg = JSON.parse(msg);
   $("#chat_messages").append(msg['name'] + ": " + msg['text'] + "<br>")
+  var elem = document.getElementById('chat_messages');
+  elem.scrollTop = elem.scrollHeight;
 }
 
 function receiveMessage_join(msg) {
