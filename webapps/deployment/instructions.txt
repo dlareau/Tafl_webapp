@@ -1,0 +1,50 @@
+This file contains the commands I ran to deploy the server. 
+Each indentation level indicates a change in user or domain. (except the first command)
+I start logged into Computer Club's user-level VM server kvm05.club.cc.cmu.edu
+
+virt-install  --name jlareau-dev2  --description jlareau-dev-vm \
+              --memory 512 --disk size=10 \
+              --network network=forward-bridge,mac=00:00:80:ED:9D:73 \
+              --extra-args console=ttyS0 --graphics none \
+              --location http://ftp.us.debian.org/debian/dists/stable/main/installer-amd64/
+
+virsh console jlareau-dev2
+  su
+    apt-get install sudo
+    visudo (add webapps to sudoers)
+  exit
+  sudo apt-get update
+  sudo apt-get upgrade
+  sudo apt-get install python-pip git emacs nginx tmux uwsgi uwsgi-plugin-python
+  sudo pip install django
+  git clone https://github.com/CMU-Web-Application-Development/Team146.git
+  ln -s /home/webapps/Team146/webapps /home/webapps/webapps
+  sudo emacs /etc/nginx/sites-enabled/default.conf
+  emacs /home/webapps/webapps/uwsgi_params
+  emacs /home/webapps/webapps/wsgi_django.py
+  emacs /home/webapps/wsgi_websocket.py
+  emacs /home/webapps/wdjango.ini
+  emacs /home/webapps/wweb.ini
+  sudo apt-get install postgresql python-psycopg2 libpq-dev python-dev postgresql-client
+  sudo pip install psycopg2
+  sudo su - postgres
+    createdb -U postgres tafl
+    psql -U postgres tafl 
+      GRANT ALL PRIVILEGES ON DATABASE tafl TO postgres;
+      \password postgres
+  exit
+  mkdir /var/www/tafl
+  mkdir /var/www/tafl/static
+  mkdir /var/www/tafl/media
+  python manage.py makemigrations
+  python manage.py migrate
+  python manage.py collectstatic
+  sudo service nginx restart
+  tmux -s websocket
+  uwsgi --ini wweb.ini 
+  Ctrl-b d
+  tmux -s webapp
+  uwsgi --ini wdjango.ini
+  Ctrl-b d
+  exit
+exit
