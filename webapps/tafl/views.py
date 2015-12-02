@@ -57,7 +57,7 @@ def game(request):
 
         # Check if move is valid
         if(not g.is_valid_move(move[0], move[1])):
-            return HttpResponse("invalid 1")
+            return HttpResponse("invalid move")
 
         # Move was valid, check for other player and send the move update
         if(g.other_player(p) != None):

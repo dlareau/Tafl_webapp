@@ -84,6 +84,10 @@ $('.tafl-piece').click(function(event) {
   }
 });
 
+$('#gameoverModal').on('hidden.bs.modal', function () {
+    window.location.replace("/tafl/");
+})
+
 //========= FORMS/MOVES /\ ================
 
 //=========  WEBSOCKETS \/ ================
@@ -140,8 +144,13 @@ function receiveMessage_move(msg) {
     src = $('[data-id="[' + msg['pos'][0] + ", " + msg['pos'][1] + ']"]').children(":first");
     src.detach();
   } else if (msg["win"]){
-    window.location.replace("/tafl/");
-  } 
+    $("#game-over-modal-body").html("Congratulations, you won!");
+    $("#gameoverModal").modal("show");
+
+  } else if (msg["lose"]){
+    $("#game-over-modal-body").html("Sorry, you lost.");
+    $("#gameoverModal").modal("show");
+  }  
   else{
     turn = !turn;
     change_turn_ids();

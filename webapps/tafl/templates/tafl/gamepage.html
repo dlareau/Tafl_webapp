@@ -51,6 +51,8 @@
   </div>
   <div id="board-container" class="col-md-7">
     <!-- Bootstrap modals. They are just fancy popups. -->
+
+    <!-- Waiting for player modal -->
     <div id="waitingModal" class="modal fade" role="dialog">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -60,6 +62,23 @@
           <div class="modal-body">
             <p>Please wait until another player joins your game. </p>
             <p>In the future there will be an option to cancel this game. </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- End of game -->
+    <div id="gameoverModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Game Over!</h4>
+          </div>
+          <div id="game-over-modal-body" class="modal-body">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>

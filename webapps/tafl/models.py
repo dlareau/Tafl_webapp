@@ -227,7 +227,7 @@ class Game(models.Model):
         self.black_player.save()
         self.white_player.cur_game = None
         self.white_player.save()
-        send_win(self.black_player, self.white_player)
+        send_win(winner, self.other_player(winner))
     #========= End Win/Endgame related game functions ===========
 
     def __unicode__(self):
