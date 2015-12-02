@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from math import exp
+from tafl.redis import *
 
 now = timezone.now()
 
@@ -222,11 +223,11 @@ class Game(models.Model):
         self.winner = winner
         self.update_ranks();
         self.save()
-        black_player.cur_game = None
-        black_player.save()
-        white_player.cur_game = None
-        white_player.save()
-        send_win(black_player, white_player)
+        self.black_player.cur_game = None
+        self.black_player.save()
+        self.white_player.cur_game = None
+        self.white_player.save()
+        send_win(self.black_player, self.white_player)
     #========= End Win/Endgame related game functions ===========
 
     def __unicode__(self):

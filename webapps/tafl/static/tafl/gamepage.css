@@ -3,12 +3,23 @@ body{
     padding:0px;
 }
 
+h3{
+    margin-top: 0px;
+}
+
 hr {
     border: 1px solid black;
 }
 
 .black {
     background-color: black;
+}
+
+.king {
+    background-image: url("http://mathworld.wolfram.com/images/eps-gif/GreekCross_1200.gif");
+    background-size: 89% 89%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .white {
@@ -37,6 +48,24 @@ hr {
     position: absolute;
     bottom: 0px;
     left: 0px;
+}
+
+#opp-turn-id {
+    position: absolute;
+    top: 15%;
+    left: 0px;
+}
+
+#you-turn-id {
+    position: absolute;
+    top: 75%;
+    left: 0px;
+    -moz-transform: scaleY(-1);
+    -o-transform: scaleY(-1);
+    -webkit-transform: scaleY(-1);
+    transform: scaleY(-1);
+    filter: FlipV;
+    -ms-filter: "FlipV";
 }
 
 #resign-btn {
@@ -96,4 +125,9 @@ hr {
     word-wrap: break-word;
     height: 70%;
     overflow: scroll;
+}
+
+#chat_checkbox {
+    float: left;
+    margin-left: 10px;
 }

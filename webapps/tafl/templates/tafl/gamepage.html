@@ -26,6 +26,12 @@
         <h3>Opponent: <br>(Black)</h3>
         <h3 id="opponent_title">{{game.black_player.user.username}}</h3>
       </span>
+      <span id="opp-turn-id" class="black-id">
+        <img src="{% static 'tafl/triangle.png' %}" alt="up-triangle" height="60" width="80">
+      </span>
+      <span id="you-turn-id" class="white-id">
+        <img src="{% static 'tafl/triangle.png' %}" alt="down-triangle" height="60" width="80">
+      </span>
     {% else %}
       <span id="id-you">
         <h3>You: <br>(Black)</h3>
@@ -34,6 +40,12 @@
       <span id="id-opp">
         <h3>Opponent: <br>(White)</h3>
         <h3>{{game.white_player.user.username}}</h3>
+      </span>
+      <span id="opp-turn-id" class="white-id">
+        <img src="{% static 'tafl/triangle.png' %}" alt="up-triangle" height="60" width="80">
+      </span>
+      <span id="you-turn-id" class="black-id">
+        <img src="{% static 'tafl/triangle.png' %}" alt="down-triangle" height="60" width="80">
       </span>
     {% endif %}
   </div>
@@ -63,7 +75,11 @@
           </div>
           <div class="modal-body">
             <!-- This is the rules dialog, only modify the text in here -->
+            {% if game.ruleset.win_cond == "EDGE" %}
             White - get your king to an edge square.
+            {% else %}
+            White - get your king to a corner.
+            {% endif %}
             <br>Black - capture the king by surrounding it on all 4 sides.
             <br>To capture a pawn - bracket on 2 sides. Note, king can't capture.
             <br>All pieces move as far as is open horizontally or vertically.
@@ -84,17 +100,11 @@
         {% for cell in row.list|dictsort:"y_coord" %}
           <div data-id="[{{cell.x_coord}}, {{cell.y_coord}}]" class="board-cell">
             {% if cell.member.color == "BL" %}
-              <div class="tafl-piece black">
+              <div class="tafl-piece black"></div>
+            {% elif cell.member.p_type == "KING" %}
+              <div class="tafl-piece white king"></div>
             {% elif cell.member.color == "WH" %}
-              <div class="tafl-piece white">
-            {% endif %}
-            {% if cell.member.p_type == "KING" %}
-              KING
-            {% endif %}
-            {% if cell.member.color == "BL" %}
-              </div>
-            {% elif cell.member.color == "WH" %}
-              </div>
+              <div class="tafl-piece white"></div>
             {% endif %}
           </div>
         {% endfor %}
@@ -114,7 +124,13 @@
       {% csrf_token %}
       <input type="text" id="inputUserPost" name="text" class="form-control" 
        placeholder="Chat here" required autofocus>
-      <button id="ChatPostButton" class="btn btn-primary" type="submit">Submit</button>
+      <div>
+        <div id="chat_checkbox">
+          <input id="chat_disable" type="checkbox" name="chat_disable" value="disable">
+          Disable Chat
+        </div>
+        <button id="ChatPostButton" class="btn btn-primary" type="submit">Submit</button>
+      </div>
     </form>
   </div>
   <script>

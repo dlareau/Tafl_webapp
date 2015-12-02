@@ -1,6 +1,11 @@
 var clicked = false;
 var piece = null;
 var dest = null;
+{% if game.turn %}
+  var turn = true;
+{% else %}
+  var turn = false;
+{% endif %}
 
 function getCookie(c_name){
   if (document.cookie.length > 0)
@@ -48,6 +53,8 @@ $('.board-cell').click(function(event) {
         if(html == "valid"){
           var temp = piece.detach();
           dest.append(temp);
+          turn = !turn;
+          change_turn_ids();
         } else{
           console.log(html);
         }
@@ -63,9 +70,9 @@ $('.board-cell').click(function(event) {
 
 $('.tafl-piece').click(function(event) {
   {% if game.white_player == player%}
-    var color = "white"
+    var color = "white";
   {% else %}
-    var color = "black"
+    var color = "black";
   {% endif %}
   if($(this).hasClass(color)){
     event.stopPropagation();
@@ -81,6 +88,16 @@ $('.tafl-piece').click(function(event) {
 
 //=========  WEBSOCKETS \/ ================
 
+function change_turn_ids(){
+  if (turn) {
+    $(".white-id").show();
+    $(".black-id").hide();
+  } else {
+    $(".black-id").show();
+    $(".white-id").hide();
+  }
+}
+
 {% if game.waiting_player %}
   jQuery(document).ready(function($) {
     $("#waitingModal").modal({backdrop: "static"});
@@ -88,11 +105,15 @@ $('.tafl-piece').click(function(event) {
 {% endif %}
 
 jQuery(document).ready(function($) {
+  // Various init tasks
+  change_turn_ids();
   size = ($("#board-container").width()-36)/9
   $(".board-cell").width(size);
   $(".board-cell").height(size);
   var elem = document.getElementById('chat_messages');
   elem.scrollTop = elem.scrollHeight;
+
+  // init websockets
   var ws4redis = WS4Redis({
     uri: '{{ WEBSOCKET_URI }}game_move?subscribe-user',
     receive_message: receiveMessage_move,
@@ -116,14 +137,14 @@ function receiveMessage_move(msg) {
   //TODO: Neater
   msg = JSON.parse(msg)
   if(msg["capture"]){
-    console.log("Capture " + msg['pos'][0] + ", " + msg['pos'][1]);
     src = $('[data-id="[' + msg['pos'][0] + ", " + msg['pos'][1] + ']"]').children(":first");
     src.detach();
   } else if (msg["win"]){
     window.location.replace("/tafl/");
   } 
   else{
-    console.log("Moved")
+    turn = !turn;
+    change_turn_ids();
     src = $('[data-id="[' + msg['move'][0][0] + ", " + msg['move'][0][1] + ']"]').children(":first");
     dst = $('[data-id="[' + msg['move'][1][0] + ", " + msg['move'][1][1] + ']"]');
     var temp = src.detach();
@@ -144,8 +165,23 @@ function receiveMessage_join(msg) {
   $("#opponent_title").html(msg);
 }
 
+$('#chat_disable').change(
+  function(){
+    if (this.checked) {
+      $('#chat_messages').hide();
+      $('#inputUserPost').attr("disabled", true);
+      $('#ChatPostButton').attr("disabled", true);
+      $("#inputUserPost").val("Disabled");
+    } else {
+      $('#chat_messages').show();
+      $('#inputUserPost').removeAttr("disabled");
+      $('#ChatPostButton').removeAttr("disabled");
+      $("#inputUserPost").val("");
+    }
+  });
+
 $(window).resize(function() {
-  size = ($("#board-container").width()-36)/9
+  size = ($("#board-container").width()-36)/9;
   $(".board-cell").width(size);
   $(".board-cell").height(size);
 });
