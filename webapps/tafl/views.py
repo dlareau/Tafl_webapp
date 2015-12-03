@@ -95,10 +95,12 @@ def makegame(request):
                 g = tafl.game.make_game(ruleset, player, None, player)
             elif(form.cleaned_data['optradio'] == "white"):
                 g = tafl.game.make_game(ruleset, None, player, player)
-            elif(form.cleaned_data['optradio'] == "either"):
-                g = tafl.game.make_game(ruleset, None, None, player)
             else:
-                g = tafl.game.make_game(ruleset, None, None, player)
+                coinflip = random.randint(0,1)
+                if coinflip:
+                    g = tafl.game.make_game(ruleset, None, player, player)
+                else:
+                    g = tafl.game.make_game(ruleset, player, None, player)
 
             player.cur_game = g;
             player.save()
@@ -119,14 +121,8 @@ def joingame(request):
         g.white_player = player
     elif g.white_player != None:
         g.black_player = player
-    else: #either case, for now randomly assign
-        coinflip = random.randint(0,1)
-        if coinflip:
-            g.white_player = player
-            g.black_player = g.waiting_player
-        else:
-            g.white_player = g.waiting_player
-            g.black_player = player
+    else: #shouldn't happen now, return error.
+        return HttpResponse("error")
 
     send_join(g.waiting_player, player)
     g.waiting_player = None #cleanup
