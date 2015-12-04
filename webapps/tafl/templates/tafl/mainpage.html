@@ -38,57 +38,73 @@
 	<div class="panel panel-default">
 	  <div class="panel-body">
 	    <div class="row">
-	      <div class="col-md-2">
-		<label>sort by:</label>
+	      <div class="col-md-5">
+		<label>sort/filter by:</label>
 	      </div>
 	    </div>
-	    <div class="row">
-	      <form method="GET" action="/tafl/mainpage">
+	    <form method="GET" action="/tafl/mainpage">
+	      <div class="row">
+		<div class="col-md-1"></div>
 		<div class="col-md-5">
+		  time created:
 		  <div class="btn-group" role="group">
 		    <button class="btn btn-info" type="submit" name="sortby" value="timeOtN">
-		      oldest to newest</button>
+		      old to new</button>
 		    <button class="btn btn-info" type="submit" name="sortby" value="timeNtO">
-		      newest to oldest</button>
+		      new to old</button>
 		  </div>
 		</div>
-		<div class="col-md-2">
-		  <button class="btn btn-info" type="submit" name="sortby" value="rank">
-		    player rank</button>
+		<div class="col-md-5">
+		  player rank:
+		  <div class="btn-group" role="group">
+		    <button class="btn btn-info" type="submit" name="sortby" value="rankLtH">
+		      low to high</button>
+		    <button class="btn btn-info" type="submit" name="sortby" value="rankHtL">
+		      high to low</button>
+		  </div>
 		</div>
-		<div class="col-md-2">
-		  <button class="btn btn-info" type="submit" name="sortby" value="color">
-		    open color</button>
+	      </div>
+	      <div class="row" style="margin-top: 10px;">
+		<div class="col-md-1"></div>
+		<div class="col-md-5">
+		  open color:
+		  <select name="opencolor" class="form-control" id="selOC">
+		    <option>Black</option>
+		    <option>White</option>
+		  </select>
+		  
 		</div>
-		<div class="col-md-2">
-		  <button class="btn btn-info" type="submit" name="sortby" value="variant">
-		    variant</button>
+		<div class="col-md-5">
+		  variant:
+		  <select name="sortvar" class="form-control" id="selVar">
+		    <option>Tablut</option>
+		  </select>
 		</div>
-		{% csrf_token %}
-	      </form>
-	    </div>
+	      </div>
+	      {% csrf_token %}
+	    </form>
 	  </div>
 	</div>
 	{% for game in games %}
 	<div class="panel panel-default">
 	  <div class="panel-body">
 	    <div class="row">
-	      <div class="col-md-2">
+	      <div class="col-md-4">
 		<h4><a href="/tafl/profile?un={{game.waiting_player.user.username}}">
 		    {{ game.waiting_player.user.username }}
 		</a></h4>
 	      </div>
 	      <div class="col-md-4"> <h4>({{ game.waiting_player.rank }})</h4></div>
-	      <div class="col-md-3">
-		<h4>waiting for: {{ game.waitingcolor }}</h4>
+	      <div class="col-md-4">
+		<h4>waiting for: <b>{{ game.waitingcolor }}</b></h4>
 	      </div>
 	    </div>
 	    <div class="row">
-	      <div class="col-md-3">
+	      <div class="col-md-4">
 		<h4>{{ game.ruleset.name }}</h4>
 		{{game.timestamp}}
 	      </div>
-	      <div class="col-md-6"></div>
+	      <div class="col-md-4"></div>
 	      <div class="col-md-3">
 		<form action="/tafl/joingame" method="POST">
 		  <input type="hidden" name="gameid" value="{{game.id}}">

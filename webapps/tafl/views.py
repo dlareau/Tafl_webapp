@@ -33,8 +33,10 @@ def gamespage(request):
         games = Game.objects.filter(waiting_player__isnull=False).order_by('timestamp')
     if sortby == "timeNtO":
         games = Game.objects.filter(waiting_player__isnull=False).order_by('-timestamp')
-    if sortby == 'rank':
+    if sortby == 'rankLtH':
         games = Game.objects.filter(waiting_player__isnull=False).order_by('waiting_player__rank')
+    if sortby == 'rankHtL':
+        games = Game.objects.filter(waiting_player__isnull=False).order_by('-waiting_player__rank')
     if sortby == 'color':
         games = Game.objects.filter(waiting_player__isnull=False).order_by('waitingcolor')
     if sortby == 'variant':
