@@ -37,11 +37,16 @@ def gamespage(request):
         games = Game.objects.filter(waiting_player__isnull=False).order_by('waiting_player__rank')
     if sortby == 'rankHtL':
         games = Game.objects.filter(waiting_player__isnull=False).order_by('-waiting_player__rank')
-    if sortby == 'color':
-        games = Game.objects.filter(waiting_player__isnull=False).order_by('waitingcolor')
-    if sortby == 'variant':
-        #bc rn there's only tablut - implement actual sorting later
-        games = Game.objects.filter(waiting_player__isnull=False)
+
+    fbC = request.GET.get('filterbyC')
+    if fbC == 'BL':
+        games = games.filter(black_player__isnull=True)
+    elif fbC == 'WH':
+        games = games.filter(white_player__isnull=True)
+
+    fbV = request.GET.get('filterbyV')
+    if fbV == 'tablut':
+        games = games.filter(ruleset__name="Tablut")
         
     context['games'] = games
     return render(request, "tafl/mainpage.html", context)
