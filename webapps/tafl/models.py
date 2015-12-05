@@ -35,6 +35,8 @@ class Game(models.Model):
     ruleset = models.ForeignKey('Ruleset')
     winner = models.ForeignKey('Player', related_name='won_games', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    is_priv = models.BooleanField(default=False)
+    priv_pw = models.CharField(max_length=200, blank=True, null=True)
 
     #============== Player related game functions ===============
     def players(self):

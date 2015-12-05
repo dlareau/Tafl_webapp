@@ -29,15 +29,20 @@
 		<option value="Brandubh">Brandubh</option>
 	      </select>
 	      <div class="row">
-		<div class="col-md-1"></div>
-		<div class="col-md-3">
-		  <div class="checkbox">
-		    <input type="checkbox" name="private" value="true" id="priv"> private game?</input>
+		<div class="panel panel-default">
+		  <div class="panel-body">
+		    <!--div class="col-md-1"></div-->
+		    <div class="col-md-3">
+		      <div class="checkbox">
+			<input type="checkbox" name="is_priv" value="true" id="priv"> private game?</input>
+		      </div>
+		    </div>
+		    <div class="col-md-8">
+		      <p>set private game password:</br>
+			(your opponent will need to input this to join)</p>
+		      <input type="text" name="priv_pw" class="form-control" id="gamepassword">
+		    </div>
 		  </div>
-		</div>
-		<div class="col-md-8">
-		  <p for="gamepassword">set private game password:</p>
-		  <input type="text" name="gamepw" class="form-control" id="gamepassword">
 		</div>
 	      </div>
 	      <input type="submit" class="btn btn-primary" value="Make Game">
@@ -120,12 +125,18 @@
 		<h4>{{ game.ruleset.name }}</h4>
 		{{game.timestamp}}
 	      </div>
-	      <div class="col-md-4"></div>
-	      <div class="col-md-3">
+	      <div class="col-md-7">
 		<form action="/tafl/joingame" method="POST">
 		  <input type="hidden" name="gameid" value="{{game.id}}">
 		  {% csrf_token %}
-		  <button class="btn btn-primary" type="submit">Join</button>
+		  {% if game.is_priv %}
+		  <input type="text" name="gamepw" class="form-control" 
+			 value="private game: input password to join">
+		  {% endif %}
+		  <div class="col-md-9"></div>
+		  <div class="col-md-2">
+		    <button class="btn btn-primary" type="submit">Join</button>
+		  </div>
 		</form>
 	      </div>
 	    </div>
