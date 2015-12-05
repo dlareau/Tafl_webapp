@@ -31,7 +31,6 @@
 	      <div class="row">
 		<div class="panel panel-default">
 		  <div class="panel-body">
-		    <!--div class="col-md-1"></div-->
 		    <div class="col-md-3">
 		      <div class="checkbox">
 			<input type="checkbox" name="is_priv" value="true" id="priv"> private game?</input>
@@ -129,6 +128,8 @@
 		<form action="/tafl/joingame" method="POST">
 		  <input type="hidden" name="gameid" value="{{game.id}}">
 		  {% csrf_token %}
+		  <!-- citation for django template if:
+		       stackoverflow.com/questions/11372177/django-template-tag-in-if-block -->
 		  {% if game.is_priv %}
 		  <input type="text" name="gamepw" class="form-control" 
 			 value="private game: input password to join">

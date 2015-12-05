@@ -115,7 +115,9 @@ class Game(models.Model):
         if((not self.ruleset.valid_pos(pos1)) or (not self.ruleset.valid_pos(pos2))):
             return False
         # Check for pieces in the way, the throne and corners
-        if (self.is_move_clear(pos1, pos2) and not (self.ruleset.is_center(pos2) or self.ruleset.is_corner(pos2))):
+        if (self.is_move_clear(pos1, pos2) and not self.ruleset.is_center(pos2) 
+            and not (self.ruleset.is_corner(pos2) and 
+                     not (self.ruleset.win_cond=='CORNER' and self.get_square(pos1).member.p_type=='KING'))):
             s1 = self.get_square(pos1)
             s2 = self.get_square(pos2)
             # Make sure there is actually a piece to move and the dest is empty
