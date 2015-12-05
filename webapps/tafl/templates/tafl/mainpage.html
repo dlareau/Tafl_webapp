@@ -13,21 +13,33 @@
 	    <form role="form" class="form horizontal" method="post" action="{% url 'makegame'  %}">
 	      <label>Color:</label>
 	      <div>
-	      <div class="radio">
-		<label><input type="radio" name="optradio" value="black">black</label>
+		<div class="radio">
+		  <label><input type="radio" name="optradio" value="black">black</label>
+		</div>
+		<div class="radio">
+		  <label><input type="radio" name="optradio" value="white">white</label>
+		</div>
+		<div class="radio">
+		  <label><input type="radio" name="optradio" checked="checked" value="either">either</label>
+		</div>
 	      </div>
-	      <div class="radio">
-		<label><input type="radio" name="optradio" value="white">white</label>
-	      </div>
-	      <div class="radio">
-		<label><input type="radio" name="optradio" checked="checked" value="either">either</label>
-	      </div>
-	  </div>
 	      <label for="sel1">Variant:</label>
 	      <select name="ruleset" class="form-control" id="sel1">
 		<option value="Tablut">Tablut</option>
 		<option value="Brandubh">Brandubh</option>
 	      </select>
+	      <div class="row">
+		<div class="col-md-1"></div>
+		<div class="col-md-3">
+		  <div class="checkbox">
+		    <input type="checkbox" name="private" value="true" id="priv"> private game?</input>
+		  </div>
+		</div>
+		<div class="col-md-8">
+		  <p for="gamepassword">set private game password:</p>
+		  <input type="text" name="gamepw" class="form-control" id="gamepassword">
+		</div>
+	      </div>
 	      <input type="submit" class="btn btn-primary" value="Make Game">
 	      {% csrf_token %}
 	    </form>
