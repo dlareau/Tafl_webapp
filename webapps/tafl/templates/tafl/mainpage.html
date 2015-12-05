@@ -130,9 +130,17 @@
       </div>
       <div class="panel-body">
 	<form class="form-horizontal" role="form" method="POST" action="{% url 'usersearch' %}">
-	  {{ usform }}
+	  {% for field in usform %}
+	  {{ field }}
+	  {% endfor %}
+	  {% csrf_token %}
 	  <input type="submit" value="go" class="btn btn-primary" />
 	</form>
+	<div class="panel-body">
+	  {% for res in usres %}
+	  <p><a href="/tafl/profile?un={{res.username}}">{{ res.username }}</a></p>
+	  {% endfor %}
+	</div>
       </div>
     </div>
   </div>

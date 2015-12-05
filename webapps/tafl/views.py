@@ -9,7 +9,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 import json
 
-from itertools import chain
 import random
 
 from tafl.redis import *
@@ -51,6 +50,8 @@ def gamespage(request):
         games = games.filter(ruleset__name="Brandubh")
         
     context['games'] = games
+    usform = SearchForm()
+    context['usform'] = usform
     return render(request, "tafl/mainpage.html", context)
 
 @login_required
@@ -155,7 +156,16 @@ def joingame(request):
 
 @login_required
 def usersearch(request):
-    return None
+    form = SearchForm(request.POST)
+    if form.is_valid():
+        results = User.objects.filter(username__icontains=form.cleaned_data['search']).filter(is_staff=False)
+    
+    context = {}
+    context['user'] = request.user
+    context['games'] = Game.objects.filter(waiting_player__isnull=False).order_by('timestamp')
+    context['usform'] = SearchForm()
+    context['usres'] = results
+    return render(request, "tafl/mainpage.html", context)
 
 @login_required
 def profile(request):
