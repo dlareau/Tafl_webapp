@@ -191,6 +191,11 @@ def profile(request):
 
     #do variant filtering if necessary
     variant = request.GET.get('variant')
+    if variant == None:
+        variant = "Overall"
+
+    context['curvar'] = variant
+
     if variant == "Tablut" or variant == "Brandubh":
         whitetotal = whitecompleteall.filter(ruleset__name=variant).count()
         blacktotal = blackcompleteall.filter(ruleset__name=variant).count()
