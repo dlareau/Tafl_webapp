@@ -25,7 +25,8 @@
 	  </div>
 	      <label for="sel1">Variant:</label>
 	      <select name="ruleset" class="form-control" id="sel1">
-		<option>Tablut</option>
+		<option value="Tablut">Tablut</option>
+		<option value="Brandubh">Brandubh</option>
 	      </select>
 	      <input type="submit" class="btn btn-primary" value="Make Game">
 	      {% csrf_token %}
@@ -80,6 +81,7 @@
 		  <select name="filterbyV" class="form-control">
 		    <option value="any">All</option>
 		    <option value="tablut">Tablut</option>
+		    <option value="brandubh">Brandubh</option>
 		  </select>
 		</div>
 	      </div>

@@ -47,6 +47,8 @@ def gamespage(request):
     fbV = request.GET.get('filterbyV')
     if fbV == 'tablut':
         games = games.filter(ruleset__name="Tablut")
+    elif fbV == 'brandubh':
+        games = games.filter(ruleset__name="Brandubh")
         
     context['games'] = games
     return render(request, "tafl/mainpage.html", context)
@@ -96,6 +98,7 @@ def makegame(request):
     if(request.method == 'POST'):
         form = GameForm(request.POST)
         if form.is_valid():
+            print form.cleaned_data['ruleset']
             ruleset = Ruleset.objects.get(name=form.cleaned_data['ruleset'])
             player = Player.objects.get(user=request.user)
             if(form.cleaned_data['optradio'] == "black"):
