@@ -43,3 +43,6 @@ class MessageForm(forms.ModelForm):
 class GameForm(forms.Form):
     optradio = forms.CharField(max_length=20)
     ruleset = forms.CharField(max_length=20)
+
+class SearchForm(forms.Form):
+    search = forms.CharField(max_length=20)
