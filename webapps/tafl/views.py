@@ -181,24 +181,44 @@ def profile(request):
     player = Player.objects.get(user=profUser)
     context['rank'] = player.rank
 
-    # get stats
-    wt = Game.objects.filter(white_player=player).count()
-    context['whitetotal'] = wt
-    ww = Game.objects.filter(white_player=player).filter(winner=player).count()
-    context['whitewin'] = ww
-    wl = wt - ww
-    context['whitelose'] = wl
+    #get white finished total, get black finished total
+    whitecompleteall = Game.objects.filter(white_player=player).filter(winner__isnull=False)
+    blackcompleteall = Game.objects.filter(black_player=player).filter(winner__isnull=False)
 
-    bt = Game.objects.filter(black_player=player).count()
-    context['blacktotal'] = bt
-    bw = Game.objects.filter(black_player=player).filter(winner=player).count()
-    context['blackwin'] = bw
-    bl = bt - bw
-    context['blacklose'] = bl
+    #get wins for each of those
+    whitewins = whitecompleteall.filter(winner=player)
+    blackwins = blackcompleteall.filter(winner=player)
 
-    context['overallwin'] = ww + bw
-    context['overalllose'] = wl + bl
-    context['overalltotal'] = wt + bt
+    #do variant filtering if necessary
+    variant = request.GET.get('variant')
+    if variant == "Tablut" or variant == "Brandubh":
+        whitetotal = whitecompleteall.filter(ruleset__name=variant).count()
+        blacktotal = blackcompleteall.filter(ruleset__name=variant).count()
+        whitewin = whitewins.filter(ruleset__name=variant).count()
+        blackwin = blackwins.filter(ruleset__name=variant).count()
+    else:
+        whitetotal = whitecompleteall.count()
+        blacktotal = blackcompleteall.count()
+        whitewin = whitewins.count()
+        blackwin = blackwins.count()
+
+    #compute remaining stats
+    whitelose = whitetotal - whitewin
+    blacklose = blacktotal - blackwin
+    overalltotal = whitetotal + blacktotal
+    overallwin = whitewin + blackwin
+    overalllose = whitelose + blacklose
+
+    #send'em
+    context['whitetotal'] = whitetotal
+    context['whitewin'] = whitewin
+    context['whitelose'] = whitelose
+    context['blacktotal'] = blacktotal
+    context['blackwin'] = blackwin
+    context['blacklose'] = blacklose
+    context['overalltotal'] = overalltotal
+    context['overallwin'] = overallwin
+    context['overalllose'] = overalllose
     return render(request, "tafl/profile.html", context)
 
 @login_required
