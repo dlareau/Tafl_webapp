@@ -77,10 +77,17 @@ $('.tafl-piece').click(function(event) {
   if($(this).hasClass(color)){
     event.stopPropagation();
     clicked = true;
+    // unhighlight last piece
     if(piece != null)
       piece.parent().css('background-color', '');
+    // Deselect logic
+    if(piece != null && piece[0] == $(this)[0]){
+      piece = null;
+      clicked = false;
+      return;
+    }
     piece = $(this);
-    piece.parent().css('background-color', 'red');
+    piece.parent().css('background-color', 'yellow');
   }
 });
 
@@ -116,6 +123,12 @@ jQuery(document).ready(function($) {
   $(".board-cell").height(size);
   var elem = document.getElementById('chat_messages');
   elem.scrollTop = elem.scrollHeight;
+  $('[data-id="[' + ({{game.ruleset.size}}/2 >> 0) + ", " + ({{game.ruleset.size}}/2 >> 0) + ']"]').addClass("throne");
+  $('[data-id="[' + 0 + ", " + 0 + ']"]').addClass("throne");
+  $('[data-id="[' + ({{game.ruleset.size}} - 1) + ", " + 0 + ']"]').addClass("throne");
+  $('[data-id="[' + 0 + ", " + ({{game.ruleset.size}}-1) + ']"]').addClass("throne");
+  $('[data-id="[' + ({{game.ruleset.size}}-1) + ", " + ({{game.ruleset.size}}-1) + ']"]').addClass("throne");
+
 
   // init websockets
   var ws4redis = WS4Redis({
@@ -142,7 +155,7 @@ function receiveMessage_move(msg) {
   msg = JSON.parse(msg)
   if(msg["capture"]){
     src = $('[data-id="[' + msg['pos'][0] + ", " + msg['pos'][1] + ']"]').children(":first");
-    src.detach();
+    src.fadeOut(500, function() {src.detach();});
   } else if (msg["win"]){
     $("#game-over-modal-body").html("Congratulations, you won!");
     $("#gameoverModal").modal("show");
