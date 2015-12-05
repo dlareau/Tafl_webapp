@@ -16,12 +16,12 @@
       <table class="table table-hover">
         <tr>
           <th>Name</th>
-          <th>Rank</th>
+          <th>ELO Rating</th>
           <th>Wins/Games</th>
         </tr>
         {% for p in players %}
           <tr>
-            <th>{{p.name}}</th>
+            <th><a href="/tafl/profile?un={{p.name}}">{{p.name}}</a></th>
             <th>{{p.rank}}</th>
             <th>{{p.whwin|add:p.blwin}}/{{p.whgames|add:p.blgames}}</th>
           </tr>
@@ -37,12 +37,12 @@
       <table class="table table-hover">
         <tr>
           <th>Name</th>
-          <th>Rank</th>
+          <th>ELO Rating</th>
           <th>Wins/Games</th>
         </tr>
         {% for p in players %}
           <tr>
-            <th>{{p.name}}</th>
+            <th><a href="/tafl/profile?un={{p.name}}">{{p.name}}</th>
             <th>{{p.rank}}</th>
             <th>{{p.blwin}}/{{p.blgames}}</th>
           </tr>
@@ -58,12 +58,12 @@
       <table class="table table-hover">
         <tr>
           <th>Name</th>
-          <th>Rank</th>
+          <th>ELO Rating</th>
           <th>Wins/Games</th>
         </tr>
         {% for p in players %}
           <tr>
-            <th>{{p.name}}</th>
+            <th><a href="/tafl/profile?un={{p.name}}">{{p.name}}</th>
             <th>{{p.rank}}</th>
             <th>{{p.whwin}}/{{p.whgames}}</th>
           </tr>
