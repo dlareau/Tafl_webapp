@@ -216,11 +216,18 @@ class Game(models.Model):
         kNeighbors = self.getNeighbors(pos)
         nCount = 0
         for kN in kNeighbors:
-            if kN.exists() and kN[0].member != None and kN[0].member.color == "BL":
-                nCount += 1
+            if kN.exists():
+                if kN[0].member != None and kN[0].member.color == "BL":
+                    nCount += 1
+                #can capture against the throne so inc for that too
+                if self.ruleset.is_center([kN[0].x_coord, kN[0].y_coord]):
+                    nCount += 1
         if nCount == 4:
             return self.black_player
-
+        # in corner escape it's also possible to capture the king against
+        #  the edge of the board w 3 black pawns
+        if nCount == 3 and self.ruleset.is_edge(pos):
+            return self.black_player
         return None
 
     def end_game(self, winner):
@@ -291,6 +298,8 @@ class Ruleset(models.Model):
         return row_valid and col_valid
 
     def is_center(self, pos):
+        print "is_center"
+        print pos
         return (pos[0] == self.size/2 and pos[1] == self.size/2)
 
 class ChatMessage(models.Model):
