@@ -33,13 +33,22 @@ def gamespage(request):
         games = Game.objects.filter(waiting_player__isnull=False).order_by('timestamp')
     if sortby == "timeNtO":
         games = Game.objects.filter(waiting_player__isnull=False).order_by('-timestamp')
-    if sortby == 'rank':
+    if sortby == 'rankLtH':
         games = Game.objects.filter(waiting_player__isnull=False).order_by('waiting_player__rank')
-    if sortby == 'color':
-        games = Game.objects.filter(waiting_player__isnull=False).order_by('waitingcolor')
-    if sortby == 'variant':
-        #bc rn there's only tablut - implement actual sorting later
-        games = Game.objects.filter(waiting_player__isnull=False)
+    if sortby == 'rankHtL':
+        games = Game.objects.filter(waiting_player__isnull=False).order_by('-waiting_player__rank')
+
+    fbC = request.GET.get('filterbyC')
+    if fbC == 'BL':
+        games = games.filter(black_player__isnull=True)
+    elif fbC == 'WH':
+        games = games.filter(white_player__isnull=True)
+
+    fbV = request.GET.get('filterbyV')
+    if fbV == 'tablut':
+        games = games.filter(ruleset__name="Tablut")
+    elif fbV == 'brandubh':
+        games = games.filter(ruleset__name="Brandubh")
         
     context['games'] = games
     return render(request, "tafl/mainpage.html", context)
@@ -87,6 +96,11 @@ def game(request):
 @login_required
 def makegame(request):
     if(request.method == 'POST'):
+        #check if user already has a game going - if so, error
+        if Player.objects.get(user=request.user).cur_game != None:
+            HttpResponse("error: already have a game in progress")
+            return gamespage(request)
+            
         form = GameForm(request.POST)
         if form.is_valid():
             ruleset = Ruleset.objects.get(name=form.cleaned_data['ruleset'])
@@ -113,6 +127,12 @@ def joingame(request):
 
     usr = request.user
     player = Player.objects.get(user=usr)
+    
+    #if player already has a cur_game, error
+    if player.cur_game != None:
+        HttpResponse("error: have game already in progress")
+        return gamespage(request)
+
     gameid = request.POST['gameid']
     g = Game.objects.get(pk=gameid)
 
