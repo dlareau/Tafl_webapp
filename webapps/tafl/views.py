@@ -96,9 +96,13 @@ def game(request):
 @login_required
 def makegame(request):
     if(request.method == 'POST'):
+        #check if user already has a game going - if so, error
+        if Player.objects.get(user=request.user).cur_game != None:
+            HttpResponse("error: already have a game in progress")
+            return gamespage(request)
+            
         form = GameForm(request.POST)
         if form.is_valid():
-            print form.cleaned_data['ruleset']
             ruleset = Ruleset.objects.get(name=form.cleaned_data['ruleset'])
             player = Player.objects.get(user=request.user)
             if(form.cleaned_data['optradio'] == "black"):
@@ -123,6 +127,12 @@ def joingame(request):
 
     usr = request.user
     player = Player.objects.get(user=usr)
+    
+    #if player already has a cur_game, error
+    if player.cur_game != None:
+        HttpResponse("error: have game already in progress")
+        return gamespage(request)
+
     gameid = request.POST['gameid']
     g = Game.objects.get(pk=gameid)
 
