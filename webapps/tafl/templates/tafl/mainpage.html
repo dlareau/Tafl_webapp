@@ -164,6 +164,9 @@
 	  {% for res in usres %}
 	  <p><a href="/tafl/profile?un={{res.username}}">{{ res.username }}</a></p>
 	  {% endfor %}
+	  {% if nores %}
+	  no users found
+	  {% endif %}
 	</div>
       </div>
     </div>

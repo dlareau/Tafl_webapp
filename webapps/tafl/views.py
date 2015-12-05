@@ -168,11 +168,12 @@ def joingame(request):
 
 @login_required
 def usersearch(request):
+    context = {}
     form = SearchForm(request.POST)
     if form.is_valid():
         results = User.objects.filter(username__icontains=form.cleaned_data['search']).filter(is_staff=False)
-    
-    context = {}
+    if not results.exists():
+        context['nores'] = True
     context['user'] = request.user
     context['games'] = Game.objects.filter(waiting_player__isnull=False).order_by('timestamp')
     context['usform'] = SearchForm()
