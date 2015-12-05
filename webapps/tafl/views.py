@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
@@ -170,13 +170,13 @@ def usersearch(request):
 @login_required
 def profile(request):
     context = {}
-    #@TODO: 404 if no user of given name to avoid crash
+
     # user making the request so their profile link in navbar works
     currUser = request.user
     context['user'] = currUser
 
     # user whose profile we want to load
-    profUser = User.objects.get(username=request.GET.get('un'))
+    profUser = get_object_or_404(User, username=request.GET.get('un'))
     context['puser'] = profUser
     player = Player.objects.get(user=profUser)
     context['rank'] = player.rank
