@@ -185,8 +185,8 @@ def leaderboard(request):
         player_dict['rank'] = p.rank
         player_dict['whwin'] = Game.objects.filter(white_player=p, winner=p).count()
         player_dict['blwin'] = Game.objects.filter(black_player=p, winner=p).count()
-        player_dict['whgames'] = Game.objects.filter(white_player=p, waiting_player=None).count()
-        player_dict['blgames'] = Game.objects.filter(black_player=p, waiting_player=None).count()
+        player_dict['whgames'] = Game.objects.filter(white_player=p, waiting_player=None).exclude(winner=None).count()
+        player_dict['blgames'] = Game.objects.filter(black_player=p, waiting_player=None).exclude(winner=None).count()
         context['players'].append(player_dict)
     return render(request, "tafl/leaderboard.html", context)
 
