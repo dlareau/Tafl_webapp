@@ -61,7 +61,10 @@
           </div>
           <div class="modal-body">
             <p>Please wait until another player joins your game. </p>
-            <p>In the future there will be an option to cancel this game. </p>
+            <form action="/tafl/resign" method="post">
+              {% csrf_token %}
+              <input class="btn" type="submit" value="Cancel Game">
+            </form>
           </div>
         </div>
       </div>

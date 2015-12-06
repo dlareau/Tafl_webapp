@@ -220,14 +220,18 @@ class Game(models.Model):
         return None
 
     def end_game(self, winner):
-        self.winner = winner
-        self.update_ranks();
+        if(self.black_player != None):
+            self.black_player.cur_game = None
+            self.black_player.save()
+        if(self.white_player != None):
+            self.white_player.cur_game = None
+            self.white_player.save()
+        if(winner != None):
+            self.winner = winner
+            self.update_ranks();
+            send_win(winner, self.other_player(winner))
+        self.waiting_player = None;
         self.save()
-        self.black_player.cur_game = None
-        self.black_player.save()
-        self.white_player.cur_game = None
-        self.white_player.save()
-        send_win(winner, self.other_player(winner))
     #========= End Win/Endgame related game functions ===========
 
     def __unicode__(self):
