@@ -14,65 +14,82 @@
 <div class="panel panel-default">
   <div class="panel-body">
     <div class="row">
-      <div class="col-md-2"></div>
-      <div class="col-md-2">
-	<label># games</label>
-      </div>
-      <div class="col-md-2">
-	<label>won</label>
-      </div>
-      <div class="col-md-2">
-	<label>lost</label>
-      </div>
+      <div class="col-md-8"></div>
       <div class="col-md-4">
-	<form role="role">
-	  <label for="sel1">filter by variant:</label>
-	  <select class="form-control" id="sel1">
-	    <option>Tablut</option>
-	  </select>
+	<form class="form-inline" role="role" method="GET" action="/tafl/profile">
+	  <input type="hidden" name="un" value="{{puser.username}}">
+	  <div class="form-group">
+	    <label for="var">filter by variant:</label>
+	    <select class="form-control" id="var" name="variant">
+	      <option value="Overall">Overall</option>
+	      <option value="Tablut">Tablut</option>
+	      <option value="Brandubh">Brandubh</option>
+	    </select>
+	  </div>
+	  <button type="submit" class="btn btn-default">go</button>
+	  {% csrf_token %}
 	</form>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-2">
-	Overall
-      </div>
-      <div class="col-md-2">
-	{{ overalltotal }}
-      </div>
-      <div class="col-md-2">
-	{{ overallwin }}
-      </div>
-      <div class="col-md-2">
-	{{ overalllose }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-	White
-      </div>
-      <div class="col-md-2">
-	{{ whitetotal }}
-      </div>
-      <div class="col-md-2">
-	{{ whitewin }}
-      </div>
-      <div class="col-md-2">
-	{{ whitelose }}
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-	Black
-      </div>
-      <div class="col-md-2">
-	{{ blacktotal }}
-      </div>
-      <div class="col-md-2">
-	{{ blackwin }}
-      </div>
-      <div class="col-md-2">
-	{{ blacklose }}
+    <div class="panel panel-default">
+      <div class="panel-body">
+	<div class="row">
+	  <div class="col-md-2"></div>
+	  <div class="col-md-2">
+	    <label># games</label>
+	  </div>
+	  <div class="col-md-2">
+	    <label>won</label>
+	  </div>
+	  <div class="col-md-2">
+	    <label>lost</label>
+	  </div>
+	  <div class="col-md-3">
+	    <label>variant:</label> {{curvar}}
+	  </div>
+	</div>
+	<div class="row">
+	  <div class="col-md-2">
+	    Overall
+	  </div>
+	  <div class="col-md-2">
+	    {{ overalltotal }}
+	  </div>
+	  <div class="col-md-2">
+	    {{ overallwin }}
+	  </div>
+	  <div class="col-md-2">
+	    {{ overalllose }}
+	  </div>
+	</div>
+	<div class="row">
+	  <div class="col-md-2">
+	    White
+	  </div>
+	  <div class="col-md-2">
+	    {{ whitetotal }}
+	  </div>
+	  <div class="col-md-2">
+	    {{ whitewin }}
+	  </div>
+	  <div class="col-md-2">
+	    {{ whitelose }}
+	  </div>
+	</div>
+	<div class="row">
+	  <div class="col-md-2">
+	    Black
+	  </div>
+	  <div class="col-md-2">
+	    {{ blacktotal }}
+	  </div>
+	  <div class="col-md-2">
+	    {{ blackwin }}
+	  </div>
+	  <div class="col-md-2">
+	    {{ blacklose }}
+	  </div>
+	</div>
       </div>
     </div>
   </div>

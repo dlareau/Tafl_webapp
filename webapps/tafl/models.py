@@ -35,6 +35,8 @@ class Game(models.Model):
     ruleset = models.ForeignKey('Ruleset')
     winner = models.ForeignKey('Player', related_name='won_games', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    is_priv = models.BooleanField(default=False)
+    priv_pw = models.CharField(max_length=200, blank=True, null=True)
 
     #============== Player related game functions ===============
     def players(self):
@@ -89,11 +91,31 @@ class Game(models.Model):
         neighbors.append(self.squares.filter(x_coord=pos[0]-1, y_coord=pos[1]))
         neighbors.append(self.squares.filter(x_coord=pos[0]+1, y_coord=pos[1]))
         return neighbors
+
+    #returns [x,y] of next square over on the line of given pos's, such that
+    #  pos2 is in the middle of the three
+    def getNextOver(self, pos1, pos2):
+        pos3 = ['x','y']
+        if pos1[0] == pos2[0]:
+            pos3[0] = pos1[0]
+            if pos1[1] < pos2[1]:
+                pos3[1] = pos2[1]+1
+            else:
+                pos3[1] = pos2[1]-1
+        elif pos1[1] == pos2[1]:
+            pos3[1] = pos1[1]
+            if pos1[0] < pos2[0]:
+                pos3[0] = pos2[0]+1
+            else:
+                pos3[0] = pos2[0]-1
+        return pos3
+
+
     #============ End Square related game functions =============
 
     #=========== Move/Capture related game functions ============
     # Returns True if there are no pieces between pos1 and pos2 (exclusive)
-    # Will also return False if the two peices are not in the same row or col
+    # Will also return False if the two pieces are not in the same row or col
     def is_move_clear(self, pos1, pos2):
         if(pos1[0] == pos2[0]):
             max_y = max(pos1[1], pos2[1])
@@ -113,7 +135,9 @@ class Game(models.Model):
         if((not self.ruleset.valid_pos(pos1)) or (not self.ruleset.valid_pos(pos2))):
             return False
         # Check for pieces in the way, the throne and corners
-        if (self.is_move_clear(pos1, pos2) and not (self.ruleset.is_center(pos2) or self.ruleset.is_corner(pos2))):
+        if (self.is_move_clear(pos1, pos2) and not self.ruleset.is_center(pos2) 
+            and not (self.ruleset.is_corner(pos2) and 
+                     not (self.ruleset.win_cond=='CORNER' and self.get_square(pos1).member.p_type=='KING'))):
             s1 = self.get_square(pos1)
             s2 = self.get_square(pos2)
             # Make sure there is actually a piece to move and the dest is empty
@@ -212,22 +236,38 @@ class Game(models.Model):
         kNeighbors = self.getNeighbors(pos)
         nCount = 0
         for kN in kNeighbors:
-            if kN.exists() and kN[0].member != None and kN[0].member.color == "BL":
-                nCount += 1
+            if kN.exists():
+                if kN[0].member != None and kN[0].member.color == "BL":
+                    nCount += 1
+                #can capture against the throne so inc for that too
+                if self.ruleset.is_center([kN[0].x_coord, kN[0].y_coord]):
+                    #if the king has space to escape on the other side of the
+                    # throne, not a win yet
+                    otherside = self.getNextOver(pos, [kN[0].x_coord, kN[0].y_coord])
+                    sq = self.get_square(otherside)
+                    if sq != None and sq.member != None:
+                        nCount += 1
         if nCount == 4:
             return self.black_player
-
+        # in corner escape it's also possible to capture the king against
+        #  the edge of the board w 3 black pawns
+        if nCount == 3 and self.ruleset.is_edge(pos):
+            return self.black_player
         return None
 
     def end_game(self, winner):
-        self.winner = winner
-        self.update_ranks();
+        if(self.black_player != None):
+            self.black_player.cur_game = None
+            self.black_player.save()
+        if(self.white_player != None):
+            self.white_player.cur_game = None
+            self.white_player.save()
+        if(winner != None):
+            self.winner = winner
+            self.update_ranks();
+            send_win(winner, self.other_player(winner))
+        self.waiting_player = None;
         self.save()
-        self.black_player.cur_game = None
-        self.black_player.save()
-        self.white_player.cur_game = None
-        self.white_player.save()
-        send_win(winner, self.other_player(winner))
     #========= End Win/Endgame related game functions ===========
 
     def __unicode__(self):

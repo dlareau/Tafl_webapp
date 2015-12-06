@@ -13,20 +13,37 @@
 	    <form role="form" class="form horizontal" method="post" action="{% url 'makegame'  %}">
 	      <label>Color:</label>
 	      <div>
-	      <div class="radio">
-		<label><input type="radio" name="optradio" value="black">black</label>
+		<div class="radio">
+		  <label><input type="radio" name="optradio" value="black">black</label>
+		</div>
+		<div class="radio">
+		  <label><input type="radio" name="optradio" value="white">white</label>
+		</div>
+		<div class="radio">
+		  <label><input type="radio" name="optradio" checked="checked" value="either">either</label>
+		</div>
 	      </div>
-	      <div class="radio">
-		<label><input type="radio" name="optradio" value="white">white</label>
-	      </div>
-	      <div class="radio">
-		<label><input type="radio" name="optradio" value="either">either</label>
-	      </div>
-	  </div>
 	      <label for="sel1">Variant:</label>
 	      <select name="ruleset" class="form-control" id="sel1">
-		<option>Tablut</option>
+		<option value="Tablut">Tablut</option>
+		<option value="Brandubh">Brandubh</option>
 	      </select>
+	      <div class="row">
+		<div class="panel panel-default">
+		  <div class="panel-body">
+		    <div class="col-md-3">
+		      <div class="checkbox">
+			<input type="checkbox" name="is_priv" value="true" id="priv"> private game?</input>
+		      </div>
+		    </div>
+		    <div class="col-md-8">
+		      <p>set private game password (cannot be blank):</br>
+			(your opponent will need to input this to join)</p>
+		      <input type="text" name="priv_pw" class="form-control" id="gamepassword">
+		    </div>
+		  </div>
+		</div>
+	      </div>
 	      <input type="submit" class="btn btn-primary" value="Make Game">
 	      {% csrf_token %}
 	    </form>
@@ -38,62 +55,94 @@
 	<div class="panel panel-default">
 	  <div class="panel-body">
 	    <div class="row">
-	      <div class="col-md-2">
-		<label>sort by:</label>
+	      <div class="col-md-5">
+		<label>sort/filter by:</label>
 	      </div>
 	    </div>
-	    <div class="row">
-	      <form method="GET" action="/tafl/mainpage">
+	    <form method="GET" action="/tafl/mainpage">
+	      <div class="row">
+		<div class="col-md-1"></div>
 		<div class="col-md-5">
+		  time created:
 		  <div class="btn-group" role="group">
 		    <button class="btn btn-info" type="submit" name="sortby" value="timeOtN">
-		      oldest to newest</button>
+		      old to new</button>
 		    <button class="btn btn-info" type="submit" name="sortby" value="timeNtO">
-		      newest to oldest</button>
+		      new to old</button>
 		  </div>
 		</div>
-		<div class="col-md-2">
-		  <button class="btn btn-info" type="submit" name="sortby" value="rank">
-		    player rank</button>
+		<div class="col-md-5">
+		  player rank:
+		  <div class="btn-group" role="group">
+		    <button class="btn btn-info" type="submit" name="sortby" value="rankLtH">
+		      low to high</button>
+		    <button class="btn btn-info" type="submit" name="sortby" value="rankHtL">
+		      high to low</button>
+		  </div>
 		</div>
-		<div class="col-md-2">
-		  <button class="btn btn-info" type="submit" name="sortby" value="color">
-		    open color</button>
+	      </div>
+	      <div class="row" style="margin-top: 10px;">
+		<div class="col-md-1"></div>
+		<div class="col-md-5">
+		  open color:
+		  <select name="filterbyC" class="form-control">
+		    <option value="any">All</option>
+		    <option value="BL">Black</option>
+		    <option value="WH">White</option>
+		  </select>
+		  
 		</div>
-		<div class="col-md-2">
-		  <button class="btn btn-info" type="submit" name="sortby" value="variant">
-		    variant</button>
+		<div class="col-md-5">
+		  variant:
+		  <select name="filterbyV" class="form-control">
+		    <option value="any">All</option>
+		    <option value="tablut">Tablut</option>
+		    <option value="brandubh">Brandubh</option>
+		  </select>
 		</div>
-		{% csrf_token %}
-	      </form>
-	    </div>
+	      </div>
+	      {% csrf_token %}
+	    </form>
 	  </div>
 	</div>
 	{% for game in games %}
 	<div class="panel panel-default">
 	  <div class="panel-body">
 	    <div class="row">
-	      <div class="col-md-2">
+	      <div class="col-md-4">
 		<h4><a href="/tafl/profile?un={{game.waiting_player.user.username}}">
 		    {{ game.waiting_player.user.username }}
 		</a></h4>
 	      </div>
 	      <div class="col-md-4"> <h4>({{ game.waiting_player.rank }})</h4></div>
-	      <div class="col-md-3">
-		<h4>waiting for: {{ game.waitingcolor }}</h4>
+	      <div class="col-md-4">
+		<h4>waiting for: <b>{{ game.waitingcolor }}</b></h4>
 	      </div>
 	    </div>
 	    <div class="row">
-	      <div class="col-md-3">
+	      <div class="col-md-4">
 		<h4>{{ game.ruleset.name }}</h4>
 		{{game.timestamp}}
 	      </div>
-	      <div class="col-md-6"></div>
-	      <div class="col-md-3">
+	      <div class="col-md-7">
 		<form action="/tafl/joingame" method="POST">
 		  <input type="hidden" name="gameid" value="{{game.id}}">
 		  {% csrf_token %}
-		  <button class="btn btn-primary" type="submit">Join</button>
+		  <!-- citation for django template if:
+		       stackoverflow.com/questions/11372177/django-template-tag-in-if-block -->
+		  {% if game.is_priv %}
+		  <input type="text" name="gamepw" class="form-control" 
+			 value="private game: input password to join">
+		  {% endif %}
+		  {% if wrongpw %}
+		  {% ifequal wronggame game.id %}
+		  <p style="color:red">wrong password</p>
+		  {% endifequal %}
+		  {% endif %}
+		  <div class="col-md-9"></div>
+		  <div class="col-md-2">
+		    <button class="btn btn-primary" type="submit">Join</button>
+		  </div>
 		</form>
 	      </div>
 	    </div>
@@ -110,9 +159,20 @@
       </div>
       <div class="panel-body">
 	<form class="form-horizontal" role="form" method="POST" action="{% url 'usersearch' %}">
-	  {{ usform }}
+	  {% for field in usform %}
+	  {{ field }}
+	  {% endfor %}
+	  {% csrf_token %}
 	  <input type="submit" value="go" class="btn btn-primary" />
 	</form>
+	<div class="panel-body">
+	  {% for res in usres %}
+	  <p><a href="/tafl/profile?un={{res.username}}">{{ res.username }}</a></p>
+	  {% endfor %}
+	  {% if nores %}
+	  no users found
+	  {% endif %}
+	</div>
       </div>
     </div>
   </div>

@@ -39,7 +39,7 @@
       </span>
       <span id="id-opp">
         <h3>Opponent: <br>(White)</h3>
-        <h3>{{game.white_player.user.username}}</h3>
+        <h3 id="opponent_title">{{game.white_player.user.username}}</h3>
       </span>
       <span id="opp-turn-id" class="white-id">
         <img src="{% static 'tafl/triangle.png' %}" alt="up-triangle" height="60" width="80">
@@ -61,7 +61,10 @@
           </div>
           <div class="modal-body">
             <p>Please wait until another player joins your game. </p>
-            <p>In the future there will be an option to cancel this game. </p>
+            <form action="/tafl/resign" method="post">
+              {% csrf_token %}
+              <input class="btn" type="submit" value="Cancel Game">
+            </form>
           </div>
         </div>
       </div>

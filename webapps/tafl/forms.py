@@ -43,3 +43,18 @@ class MessageForm(forms.ModelForm):
 class GameForm(forms.Form):
     optradio = forms.CharField(max_length=20)
     ruleset = forms.CharField(max_length=20)
+    is_priv = forms.BooleanField(required=False)
+    priv_pw = forms.CharField(max_length=200, required=False)
+    #priv_pw all cleartext bc it's just limited who can join a game,
+    #  not locking anything important
+    
+    def clean(self):
+        cleaned_data = super(GameForm, self).clean()
+        isp = cleaned_data.get('is_priv')
+        ppw = cleaned_data.get('priv_pw')
+        if isp and ppw=="":
+            raise forms.ValidationError("must provide password for private game")
+        return cleaned_data
+
+class SearchForm(forms.Form):
+    search = forms.CharField(max_length=20)

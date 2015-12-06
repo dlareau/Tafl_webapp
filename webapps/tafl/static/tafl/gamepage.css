@@ -16,10 +16,15 @@ hr {
 }
 
 .king {
-    background-image: url("http://mathworld.wolfram.com/images/eps-gif/GreekCross_1200.gif");
+    background:url(http://mathworld.wolfram.com/images/eps-gif/GreekCross_1200.gif);
     background-size: 89% 89%;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.throne {
+    background:url(/static/tafl/x.png);
+    background-size:100% 100%;
 }
 
 .white {
@@ -97,7 +102,7 @@ hr {
     width:90%;
     height: 90%;
     border-radius: 30px;
-    margin: 4px;
+    margin: 3px;
     text-align: center;
     padding-top: 18px;
     box-shadow: 2px 3px 10px;
