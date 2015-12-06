@@ -116,6 +116,11 @@ def makegame(request):
                     g = tafl.game.make_game(ruleset, None, player, player)
                 else:
                     g = tafl.game.make_game(ruleset, player, None, player)
+            
+            if(form.cleaned_data['is_priv']): #private game
+                g.is_priv = True
+                g.priv_pw = form.cleaned_data['priv_pw']
+                g.save()
 
             player.cur_game = g;
             player.save()
@@ -137,6 +142,13 @@ def joingame(request):
     gameid = request.POST['gameid']
     g = Game.objects.get(pk=gameid)
 
+    #if private game, check inputted pw against stored one
+    if g.is_priv:
+        pwAttempt = request.POST['gamepw']
+        if pwAttempt != g.priv_pw:
+            HttpResponse("wrong pw")
+            return gamespage(request)
+
     #set player 2
     if g.black_player != None:
         g.white_player = player
@@ -156,11 +168,12 @@ def joingame(request):
 
 @login_required
 def usersearch(request):
+    context = {}
     form = SearchForm(request.POST)
     if form.is_valid():
         results = User.objects.filter(username__icontains=form.cleaned_data['search']).filter(is_staff=False)
-    
-    context = {}
+    if not results.exists():
+        context['nores'] = True
     context['user'] = request.user
     context['games'] = Game.objects.filter(waiting_player__isnull=False).order_by('timestamp')
     context['usform'] = SearchForm()

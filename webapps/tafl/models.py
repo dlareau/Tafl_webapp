@@ -35,6 +35,8 @@ class Game(models.Model):
     ruleset = models.ForeignKey('Ruleset')
     winner = models.ForeignKey('Player', related_name='won_games', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    is_priv = models.BooleanField(default=False)
+    priv_pw = models.CharField(max_length=200, blank=True, null=True)
 
     #============== Player related game functions ===============
     def players(self):
@@ -113,7 +115,9 @@ class Game(models.Model):
         if((not self.ruleset.valid_pos(pos1)) or (not self.ruleset.valid_pos(pos2))):
             return False
         # Check for pieces in the way, the throne and corners
-        if (self.is_move_clear(pos1, pos2) and not (self.ruleset.is_center(pos2) or self.ruleset.is_corner(pos2))):
+        if (self.is_move_clear(pos1, pos2) and not self.ruleset.is_center(pos2) 
+            and not (self.ruleset.is_corner(pos2) and 
+                     not (self.ruleset.win_cond=='CORNER' and self.get_square(pos1).member.p_type=='KING'))):
             s1 = self.get_square(pos1)
             s2 = self.get_square(pos2)
             # Make sure there is actually a piece to move and the dest is empty
@@ -212,11 +216,18 @@ class Game(models.Model):
         kNeighbors = self.getNeighbors(pos)
         nCount = 0
         for kN in kNeighbors:
-            if kN.exists() and kN[0].member != None and kN[0].member.color == "BL":
-                nCount += 1
+            if kN.exists():
+                if kN[0].member != None and kN[0].member.color == "BL":
+                    nCount += 1
+                #can capture against the throne so inc for that too
+                if self.ruleset.is_center([kN[0].x_coord, kN[0].y_coord]):
+                    nCount += 1
         if nCount == 4:
             return self.black_player
-
+        # in corner escape it's also possible to capture the king against
+        #  the edge of the board w 3 black pawns
+        if nCount == 3 and self.ruleset.is_edge(pos):
+            return self.black_player
         return None
 
     def end_game(self, winner):
@@ -291,6 +302,8 @@ class Ruleset(models.Model):
         return row_valid and col_valid
 
     def is_center(self, pos):
+        print "is_center"
+        print pos
         return (pos[0] == self.size/2 and pos[1] == self.size/2)
 
 class ChatMessage(models.Model):
