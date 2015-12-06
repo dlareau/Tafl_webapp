@@ -147,7 +147,12 @@ def joingame(request):
         pwAttempt = request.POST['gamepw']
         if pwAttempt != g.priv_pw:
             HttpResponse("wrong pw")
-            return gamespage(request)
+            context['user'] = request.user
+            context['games'] = Game.objects.filter(waiting_player__isnull=False).order_by('timestamp')
+            context['usform'] = SearchForm()
+            context['wrongpw'] = True
+            context['wronggame'] = g.id
+            return render(request, "tafl/mainpage.html", context)
 
     #set player 2
     if g.black_player != None:
@@ -172,12 +177,12 @@ def usersearch(request):
     form = SearchForm(request.POST)
     if form.is_valid():
         results = User.objects.filter(username__icontains=form.cleaned_data['search']).filter(is_staff=False)
-    if not results.exists():
-        context['nores'] = True
+        if not results.exists():
+            context['nores'] = True
+        context['usres'] = results
     context['user'] = request.user
     context['games'] = Game.objects.filter(waiting_player__isnull=False).order_by('timestamp')
     context['usform'] = SearchForm()
-    context['usres'] = results
     return render(request, "tafl/mainpage.html", context)
 
 @login_required

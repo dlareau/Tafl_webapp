@@ -37,7 +37,7 @@
 		      </div>
 		    </div>
 		    <div class="col-md-8">
-		      <p>set private game password:</br>
+		      <p>set private game password (cannot be blank):</br>
 			(your opponent will need to input this to join)</p>
 		      <input type="text" name="priv_pw" class="form-control" id="gamepassword">
 		    </div>
@@ -133,6 +133,11 @@
 		  {% if game.is_priv %}
 		  <input type="text" name="gamepw" class="form-control" 
 			 value="private game: input password to join">
+		  {% endif %}
+		  {% if wrongpw %}
+		  {% ifequal wronggame game.id %}
+		  <p style="color:red">wrong password</p>
+		  {% endifequal %}
 		  {% endif %}
 		  <div class="col-md-9"></div>
 		  <div class="col-md-2">
