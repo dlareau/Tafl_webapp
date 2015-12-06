@@ -91,11 +91,31 @@ class Game(models.Model):
         neighbors.append(self.squares.filter(x_coord=pos[0]-1, y_coord=pos[1]))
         neighbors.append(self.squares.filter(x_coord=pos[0]+1, y_coord=pos[1]))
         return neighbors
+
+    #returns [x,y] of next square over on the line of given pos's, such that
+    #  pos2 is in the middle of the three
+    def getNextOver(self, pos1, pos2):
+        pos3 = ['x','y']
+        if pos1[0] == pos2[0]:
+            pos3[0] = pos1[0]
+            if pos1[1] < pos2[1]:
+                pos3[1] = pos2[1]+1
+            else:
+                pos3[1] = pos2[1]-1
+        elif pos1[1] == pos2[1]:
+            pos3[1] = pos1[1]
+            if pos1[0] < pos2[0]:
+                pos3[0] = pos2[0]+1
+            else:
+                pos3[0] = pos2[0]-1
+        return pos3
+
+
     #============ End Square related game functions =============
 
     #=========== Move/Capture related game functions ============
     # Returns True if there are no pieces between pos1 and pos2 (exclusive)
-    # Will also return False if the two peices are not in the same row or col
+    # Will also return False if the two pieces are not in the same row or col
     def is_move_clear(self, pos1, pos2):
         if(pos1[0] == pos2[0]):
             max_y = max(pos1[1], pos2[1])
@@ -221,7 +241,12 @@ class Game(models.Model):
                     nCount += 1
                 #can capture against the throne so inc for that too
                 if self.ruleset.is_center([kN[0].x_coord, kN[0].y_coord]):
-                    nCount += 1
+                    #if the king has space to escape on the other side of the
+                    # throne, not a win yet
+                    otherside = self.getNextOver(pos, [kN[0].x_coord, kN[0].y_coord])
+                    sq = self.get_square(otherside)
+                    if sq != None and sq.member != None:
+                        nCount += 1
         if nCount == 4:
             return self.black_player
         # in corner escape it's also possible to capture the king against
@@ -302,8 +327,6 @@ class Ruleset(models.Model):
         return row_valid and col_valid
 
     def is_center(self, pos):
-        print "is_center"
-        print pos
         return (pos[0] == self.size/2 and pos[1] == self.size/2)
 
 class ChatMessage(models.Model):
